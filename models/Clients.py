@@ -1,6 +1,8 @@
-class Clients:
-    def __init__(self, cnpj, nome, email, senha):
-        self.cnpj = cnpj
-        self.nome = nome
-        self.email = email
-        self.senha = senha
+from pydantic import BaseModel
+
+
+class Clients(BaseModel):
+    cnpj: str
+    nome: str
+    email: str
+    senha: str
