@@ -2,11 +2,26 @@ import bcrypt
 import psycopg2
 from fastapi import FastAPI, HTTPException
 from starlette.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 
 from database.connection.Connection import connect_to_db
 from models.Clients import Clients
 
 app = FastAPI()
+
+origins = [
+    "http://localhost/",
+    "http://localhost:8080/",
+    # Adicione aqui os domínios permitidos
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "PUT", "DELETE"],
+    allow_headers=["*"],
+)
 
 EMPTY_STRING = "";
 
@@ -26,10 +41,10 @@ async def get_clients():
         for client in data:
             client_dict = {
                 "id": client[0],
-                "cnpj": client[1],
-                "nome": client[2],
+                "cpf": client[1],
+                "name": client[2],
                 "email": client[3],
-                "senha": client[4]
+                "password": client[4]
             }
             clients_list.append(client_dict)
         return JSONResponse(content={'clients': clients_list}, status_code=200)
@@ -43,8 +58,8 @@ async def insert_clients(client: Clients):
     if connection:
         try:
             cursor = connection.cursor()
-            cursor.execute(f"INSERT INTO clients (cnpj, nome, email, senha) VALUES (%s, %s, %s, %s);",
-                           (client.cnpj, client.nome, client.email, create_hash_password(client.senha)))
+            cursor.execute(f"INSERT INTO clients (name, email, password) VALUES (%s, %s, %s);",
+                           (client.name, client.email, create_hash_password(client.password)))
             connection.commit()
             cursor.close()
             connection.close()
@@ -55,14 +70,14 @@ async def insert_clients(client: Clients):
         raise HTTPException(status_code=500, detail="Falha na conexão ao PostgreSQL")
 
 
-@app.delete("/delete/{cnpj}")
-async def delete_clients(cnpj: str):
+@app.delete("/delete/{cpf}")
+async def delete_clients(cpf: str):
     connection = connect_to_db()
-    print(cnpj)
+    print(cpf)
     if connection:
         try:
             cursor = connection.cursor()
-            cursor.execute(f"DELETE FROM CLIENTS WHERE CNPJ = '{cnpj}';")
+            cursor.execute(f"DELETE FROM CLIENTS WHERE cpf = '{cpf}';")
             connection.commit()
             cursor.close()
             connection.close()
@@ -73,14 +88,14 @@ async def delete_clients(cnpj: str):
         raise HTTPException(status_code=500, detail="Falha na conexão ao PostgreSQL")
 
 
-@app.put("/update/{cnpj}", response_model=Clients)
-async def update_clients(cnpj: str, client: Clients):
+@app.put("/update/{cpf}", response_model=Clients)
+async def update_clients(cpf: str, client: Clients):
     connection = connect_to_db()
     if connection:
         try:
             cursor = connection.cursor()
             cursor.execute(
-                f"UPDATE CLIENTS SET NOME = '{client.nome}', EMAIL = '{client.email}', SENHA = '{client.senha}' WHERE CNPJ = '{cnpj}';")
+                f"UPDATE CLIENTS SET NAME = '{client.name}', EMAIL = '{client.email}', PASSWORD = '{client.password}' WHERE CPF = '{cpf}';")
             connection.commit()
             cursor.close()
             connection.close()
@@ -91,14 +106,14 @@ async def update_clients(cnpj: str, client: Clients):
         raise HTTPException(status_code=500, detail="Falha na conexão ao PostgreSQL")
 
 
-@app.get("/findByCnpj/{cnpj}")
-async def find_by_cnpj(cnpj: str):
+@app.get("/findByCpf/{cpf}")
+async def find_by_cpf(cpf: str):
     connection = connect_to_db()
-    if cnpjExists(cnpj):
+    if cpfExists(cpf):
         if connection:
             try:
                 cursor = connection.cursor()
-                cursor.execute(f"SELECT * FROM CLIENTS WHERE CNPJ = '{cnpj}';")
+                cursor.execute(f"SELECT * FROM CLIENTS WHERE CPF = '{cpf}';")
                 connection.commit()
                 data = cursor.fetchall()
                 cursor.close()
@@ -146,14 +161,14 @@ def idExists(id_to_find: int) -> bool:
     connection.close()
 
 
-def cnpjExists(cnpj: str) -> bool:
+def cpfExists(cpf: str) -> bool:
     connection = connect_to_db()
     if connection:
         cursor = connection.cursor()
         cursor.execute("SELECT * FROM CLIENTS;")
         data = cursor.fetchall()
         for client in data:
-            if cnpj == client[1]:
+            if cpf == client[1]:
                 return True
         return False
     connection.close()
