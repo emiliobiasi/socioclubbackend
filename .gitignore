@@ -1,5 +1,5 @@
 # Byte-compiled / optimized / DLL files
-__pycache__/
+.__pycache__/
 *.py[cod]
 
 # C extensions
@@ -56,4 +56,5 @@ docs/_build/
 # PyBuilder
 target/
 
-database/connection/.env
+.database/connection/.env
+.env
