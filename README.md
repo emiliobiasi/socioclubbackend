@@ -20,7 +20,7 @@ pip install "uvicorn[standard]"
 5. Execute o seguinte comando para iniciar sua API localmente:
 
 ```bash
-uvicorn main:app --reload
+uvicorn app:app --reload
 ```
 
 Substitua main pelo nome do arquivo Python principal que contém sua aplicação FastAPI e app pelo nome da variável que contém a sua instância FastAPI, se for diferente.

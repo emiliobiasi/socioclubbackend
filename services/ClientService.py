@@ -6,9 +6,12 @@ import bcrypt
 
 
 class ClientService:
+
     @staticmethod
     def get_clients() -> List[Clients]:
+
         connection = connect_to_db()
+        
         if connection:
             cursor = connection.cursor()
             cursor.execute("SELECT * FROM CLIENTS;")

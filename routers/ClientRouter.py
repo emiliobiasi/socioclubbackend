@@ -8,7 +8,6 @@ from models.Clients import Clients
 
 router = APIRouter()
 
-
 @router.get("/clients")
 async def get_clients():
     try:

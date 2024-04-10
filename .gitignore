@@ -58,3 +58,4 @@ target/
 
 .database/connection/.env
 .env
+venv/

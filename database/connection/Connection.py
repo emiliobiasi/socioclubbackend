@@ -2,16 +2,20 @@ import psycopg2
 from psycopg2 import Error
 from dotenv import load_dotenv
 import os
+import sys
 
-dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
-load_dotenv(dotenv_path)
+full_path = os.path.abspath(os.path.join("./",'.env'))
+print(full_path)
+path_env_file = full_path if os.path.isfile(full_path) else os.path.abspath(os.path.join(os.path.dirname(sys.executable), '.env'))
 
-DB_HOST = os.getenv("DB_HOST")
-DB_PORT = os.getenv("DB_PORT")
-DB_NAME = os.getenv("DB_NAME")
-DB_USER = os.getenv("DB_USER")
-DB_PASSWORD = os.getenv("DB_PASSWORD")
-
+if load_dotenv(path_env_file):
+    DB_HOST = os.getenv("DB_HOST")
+    DB_PORT = os.getenv("DB_PORT")
+    DB_NAME = os.getenv("DB_NAME")
+    DB_USER = os.getenv("DB_USER")
+    DB_PASSWORD = os.getenv("DB_PASSWORD")
+else:
+   raise Exception('Não foi possível achar o arquivo .env: ' + path_env_file)
 
 def connect_to_db():
     try:
