@@ -1,9 +1,10 @@
 from fastapi import APIRouter, HTTPException
 from starlette.responses import JSONResponse
-
+from fastapi import status
+from fastapi import Request
 from services.ClientService import ClientService
 
-from models.Clients import Clients
+from models.Client import Client
 
 
 router = APIRouter()
@@ -18,7 +19,7 @@ async def get_clients():
 
 
 @router.post("/register")
-async def insert_client(client: Clients):
+async def insert_client(client: Client):
     try:
         ClientService.insert_client(client)
         return JSONResponse(content={'data': 'Cliente inserido'}, status_code=201)
@@ -35,8 +36,8 @@ async def delete_client(cpf: str):
         raise HTTPException(status_code=500, detail=f"Erro ao deletar cliente: {str(e)}")
 
 
-@router.put("/update/{cpf}", response_model=Clients)
-async def update_client(cpf: str, client: Clients):
+@router.put("/update/{cpf}", response_model=Client)
+async def update_client(cpf: str, client: Client):
     try:
         ClientService.update_client_by_cpf(cpf, client)
         return JSONResponse(content={'data': 'Cliente atualizado com sucesso'}, status_code=200)
@@ -66,3 +67,15 @@ async def find_client_by_cpf(cpf: str):
             return JSONResponse(content={'message': 'Cliente não encontrado'}, status_code=404)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Erro ao buscar cliente: {str(e)}")
+    
+@router.post("/login")
+async def login(request: Request):
+    data = await request.json()
+    
+    access_data = ClientService.login(email=data["email"], password=data["password"])
+    
+    return JSONResponse(
+        content=access_data,
+        status_code=status.HTTP_200_OK
+    )
+
