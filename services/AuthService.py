@@ -1,8 +1,8 @@
-from fastapi import HTTPException, Request, status
+from fastapi import HTTPException, status
 from services.ClientService import ClientService
 from datetime import datetime, timedelta
-from jose import jwt, JWTError
-import os, sys
+from jose import jwt
+import sys, os
 from dotenv import load_dotenv
 
 full_path = os.path.abspath(os.path.join("./",'.env'))
@@ -46,38 +46,3 @@ class AuthService:
             'access_token': access_token,
             'expires_at': exp.strftime("%Y-%m-%d %H:%M:%S")
         }
-    
-    @staticmethod
-    async def verify_token(request: Request, call_next):
-
-        if request.url.path == "/login":
-        # Se for a rota de login, não faz a verificação do token e continua para o próximo middleware
-            response = await call_next(request)
-            return response
-        
-        try:
-            access_token = request.headers.get("Authorization")
-
-            if access_token is None:
-                raise HTTPException(
-                    status_code=status.HTTP_401_UNAUTHORIZED,
-                    detail='Token inválido'
-                )
-
-            data = jwt.decode(access_token, SECRET_KEY, algorithms=[ALGORITHM])
-        except JWTError:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail='Token inválido'
-            )
-        
-        client_on_db = ClientService.find_client_by_email(data['sub'])
-
-        if client_on_db is None:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail='Token inválido'
-            )
-        
-        response = await call_next(request)
-        return response
