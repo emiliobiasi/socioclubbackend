@@ -7,6 +7,7 @@ import bcrypt
 import os
 from dotenv import load_dotenv
 from jose import jwt, JWTError
+from dotenv import dotenv_values
 
 #Fazer tratamento de erro nos services usando HTTPException
 #Ver Exceptions que podem ser lançadas pelo postgres
@@ -14,14 +15,16 @@ from jose import jwt, JWTError
 #Ver uma forma de juntar os find em um só método
 #Ver outra forma de importar variáveis de ambiente
 
-full_path = os.path.abspath(os.path.join("./",'.env'))
-path_env_file = full_path if os.path.isfile(full_path) else os.path.abspath(os.path.join(os.path.dirname(sys.executable), '.env'))
 
-if load_dotenv(path_env_file):
+projeto_raiz = os.getcwd()
+caminho_env = os.path.join(projeto_raiz, '.env')
+env_vars = dotenv_values(caminho_env)
+
+if load_dotenv(caminho_env):
     SECRET_KEY = os.getenv("SECRET_KEY")
     ALGORITHM = os.getenv("ALGORITHM")
 else:
-   raise Exception('Não foi possível achar o arquivo .env: ' + path_env_file)
+   raise Exception('Não foi possível achar o arquivo .env: ' + caminho_env)
 
 class ClientService:
 

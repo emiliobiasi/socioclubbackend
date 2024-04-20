@@ -2,17 +2,19 @@ from fastapi import HTTPException, status
 from services.ClientService import ClientService
 from datetime import datetime, timedelta
 from jose import jwt
-import sys, os
 from dotenv import load_dotenv
+import os
+from dotenv import dotenv_values
 
-full_path = os.path.abspath(os.path.join("./",'.env'))
-path_env_file = full_path if os.path.isfile(full_path) else os.path.abspath(os.path.join(os.path.dirname(sys.executable), '.env'))
+projeto_raiz = os.getcwd()
+caminho_env = os.path.join(projeto_raiz, '.env')
+env_vars = dotenv_values(caminho_env)
 
-if load_dotenv(path_env_file):
-    SECRET_KEY = os.getenv("SECRET_KEY")
-    ALGORITHM = os.getenv("ALGORITHM")
+if load_dotenv(caminho_env):
+    SECRET_KEY = env_vars.get("SECRET_KEY")
+    ALGORITHM = env_vars.get("ALGORITHM")
 else:
-   raise Exception('Não foi possível achar o arquivo .env: ' + path_env_file)
+   raise Exception('Não foi possível achar o arquivo .env: ' + caminho_env)
 
 class AuthService:
 
