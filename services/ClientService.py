@@ -30,11 +30,15 @@ class ClientService:
         
         client_on_db = ClientService.find_client_by_email(email)
 
+        print(client_on_db)
+
         if client_on_db is None:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED, 
                 detail='Email ou senha incorretos',
             )
+        
+        print(ClientService.verify_password(password, client_on_db.password))
         
         if not ClientService.verify_password(password, client_on_db.password):
             raise HTTPException(
