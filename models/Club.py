@@ -1,4 +1,6 @@
-class Club:
+from pydantic import BaseModel
+
+class Club(BaseModel):
     name: str
     email: str
     password: str
@@ -7,5 +9,6 @@ class Club:
     address: str
     primary_color: str
     secondary_color: str
-    logo: bytes
-    background: bytes
+    logo: str
+    background: str
+        

@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException
 from starlette.responses import JSONResponse
 from fastapi import status
 from fastapi import Request
-#from services.ClientService import ClientService
+from services.ClubService import ClubService
 
 from models.Club import Club
 
@@ -12,7 +12,7 @@ router = APIRouter()
 @router.get('/clubs')
 async def get_clubs():
     try:
-        clubs = 0
+        clubs = ClubService.get_clubs()
         return JSONResponse(content={'clubs': [club.dict() for club in clubs]}, status_code=200)
 
     except Exception as e:

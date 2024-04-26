@@ -4,6 +4,7 @@ from database.connection.Connection import connect_to_db
 import os
 from dotenv import load_dotenv
 from dotenv import dotenv_values
+import base64
 
 projeto_raiz = os.getcwd()
 caminho_env = os.path.join(projeto_raiz, '.env')
@@ -30,7 +31,20 @@ class ClubService:
             clubs_list = []
             for club in data:
                 clubs_list.append(
-                    Club(id=club[0], cpf=club[1], name=club[2], email=club[3], password=club[4]))
+                    Club(
+                        name = club[1],
+                        email = club[2],
+                        password = club[3],
+                        cnpj = club[4],
+                        description = club[5],
+                        address = club[6],
+                        primary_color = club[7],
+                        secondary_color = club[8],
+                        logo = club[9].tobytes().decode('utf-8'),
+                        background = club[10].tobytes().decode('utf-8'),
+                    )
+                    
+                )
             return clubs_list
         else:
             raise Exception("Falha na conexão ao PostgreSQL")

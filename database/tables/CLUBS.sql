@@ -9,5 +9,5 @@ CREATE TABLE CLUBS (
     primary_color VARCHAR(7) NOT NULL,
     secondary_color VARCHAR(7) NOT NULL,
     logo BYTEA NOT NULL,
-    background BYTEA NOT NULL,
+    background BYTEA NOT NULL
 );
