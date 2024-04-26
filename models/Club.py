@@ -1,0 +1,11 @@
+class Club:
+    name: str
+    email: str
+    password: str
+    cnpj: str
+    description: str
+    address: str
+    primary_color: str
+    secondary_color: str
+    logo: bytes
+    background: bytes
