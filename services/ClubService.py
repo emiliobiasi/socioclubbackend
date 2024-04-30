@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 from models.Club import Club
 from database.connection.Connection import connect_to_db
 import os
@@ -46,5 +46,33 @@ class ClubService:
                     
                 )
             return clubs_list
+        else:
+            raise Exception("Falha na conexão ao PostgreSQL")
+        
+    @staticmethod
+    def find_by_id(client_id: int) -> Optional[Club]:
+        connection = connect_to_db()
+        if connection:
+            cursor = connection.cursor()
+            cursor.execute(f"SELECT * FROM CLUBS WHERE id={client_id};")
+            data = cursor.fetchone()
+            cursor.close()
+            connection.close()
+            if data:
+                print(data)
+                return Club(
+                        name = data[1],
+                        email = data[2],
+                        password = data[3],
+                        cnpj = data[4],
+                        description = data[5],
+                        address = data[6],
+                        primary_color = data[7],
+                        secondary_color = data[8],
+                        logo = data[9].tobytes().decode('utf-8'),
+                        background = data[10].tobytes().decode('utf-8'),
+                    )
+            else:
+                return None
         else:
             raise Exception("Falha na conexão ao PostgreSQL")

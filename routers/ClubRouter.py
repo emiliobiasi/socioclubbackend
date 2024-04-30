@@ -17,3 +17,14 @@ async def get_clubs():
 
     except Exception as e:
         return JSONResponse(content={"message": f"Erro ao obter clubes: {str(e)}"}, status_code=500)
+    
+@router.get("/findClubById/{id}")
+async def find_client_by_id(id: int):
+    try:
+        club = ClubService.find_by_id(id)
+        if club:
+            return JSONResponse(content={'club': club.dict()}, status_code=200)
+        else:
+            return JSONResponse(content={'message': 'Clube não encontrado'}, status_code=404)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erro ao buscar clube: {str(e)}")
