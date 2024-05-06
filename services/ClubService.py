@@ -24,7 +24,7 @@ class ClubService:
         
         if connection:
             cursor = connection.cursor()
-            cursor.execute("SELECT * FROM CLUBS;")
+            cursor.execute("SELECT * FROM Club;")
             data = cursor.fetchall()
             cursor.close()
             connection.close()
@@ -32,16 +32,21 @@ class ClubService:
             for club in data:
                 clubs_list.append(
                     Club(
+                        id = club[0],
                         name = club[1],
-                        email = club[2],
-                        password = club[3],
-                        cnpj = club[4],
-                        description = club[5],
-                        address = club[6],
-                        primary_color = club[7],
-                        secondary_color = club[8],
-                        logo = club[9].tobytes().decode('utf-8'),
-                        background = club[10].tobytes().decode('utf-8'),
+                        password = club[2],
+                        description = club[3],
+                        address = club[4],
+                        logo = club[5],
+                        email = club[6],
+                        cnpj = club[7],
+                        background = club[8],
+                        titles_color = club[9],
+                        subtitles_color = club[10],
+                        buttons_color = club[11],
+                        palette_1 = club[12],
+                        palette_2 = club[13],
+                        palette_3 = club[14],
                     )
                     
                 )
@@ -54,12 +59,12 @@ class ClubService:
         connection = connect_to_db()
         if connection:
             cursor = connection.cursor()
-            cursor.execute(f"SELECT * FROM CLUBS WHERE id={client_id};")
+            cursor.execute(f"SELECT * FROM Club WHERE id={client_id};")
             data = cursor.fetchone()
             cursor.close()
             connection.close()
             if data:
-                print(data)
+                
                 return Club(
                         name = data[1],
                         email = data[2],
@@ -69,8 +74,8 @@ class ClubService:
                         address = data[6],
                         primary_color = data[7],
                         secondary_color = data[8],
-                        logo = data[9].tobytes().decode('utf-8'),
-                        background = data[10].tobytes().decode('utf-8'),
+                        logo = data[9],
+                        background = data[10],
                     )
             else:
                 return None

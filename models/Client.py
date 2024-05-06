@@ -5,6 +5,7 @@ import re
 #Fazer validação dos atributos
 
 class Client(BaseModel):
+    id: Optional[int] = None
     cpf: Optional[str] = None
     name: str
     email: str

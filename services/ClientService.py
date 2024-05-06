@@ -33,15 +33,11 @@ class ClientService:
         
         client_on_db = ClientService.find_client_by_email(email)
 
-        print(client_on_db)
-
         if client_on_db is None:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED, 
                 detail='Email ou senha incorretos',
             )
-        
-        print(ClientService.verify_password(password, client_on_db.password))
         
         if not ClientService.verify_password(password, client_on_db.password):
             raise HTTPException(
@@ -70,14 +66,14 @@ class ClientService:
         
         if connection:
             cursor = connection.cursor()
-            cursor.execute("SELECT * FROM CLIENTS;")
+            cursor.execute("SELECT * FROM Client;")
             data = cursor.fetchall()
             cursor.close()
             connection.close()
             clients_list = []
             for client in data:
                 clients_list.append(
-                    Client(id=client[0], cpf=client[1], name=client[2], email=client[3], password=client[4]))
+                    Client(id=client[0], cpf=client[2], name=client[1], email=client[4], password=client[3]))
             return clients_list
         else:
             raise Exception("Falha na conexão ao PostgreSQL")
@@ -87,12 +83,12 @@ class ClientService:
         connection = connect_to_db()
         if connection:
             cursor = connection.cursor()
-            cursor.execute(f"SELECT * FROM CLIENTS WHERE id={client_id};")
+            cursor.execute(f"SELECT * FROM Client WHERE id={client_id};")
             data = cursor.fetchone()
             cursor.close()
             connection.close()
             if data:
-                return Client(id=data[0], cpf=data[1], name=data[2], email=data[3], password=data[4])
+                return Client(id=data[0], cpf=data[2], name=data[1], email=data[4], password=data[3])
             else:
                 return None
         else:
@@ -104,8 +100,8 @@ class ClientService:
         if connection:
             try:
                 cursor = connection.cursor()
-                cursor.execute("INSERT INTO clients (name, email, password) VALUES (%s, %s, %s);",
-                               (client.name, client.email, ClientService.create_hash_password(client.password)))
+                cursor.execute("INSERT INTO Client (name, email, password, cpf) VALUES (%s, %s, %s, %s);",
+                               (client.name, client.email, ClientService.create_hash_password(client.password), client.cpf))
                 connection.commit()
                 cursor.close()
                 connection.close()
@@ -120,7 +116,7 @@ class ClientService:
         if connection:
             try:
                 cursor = connection.cursor()
-                cursor.execute("DELETE FROM CLIENTS WHERE cpf = %s;", (cpf,))
+                cursor.execute("DELETE FROM Client WHERE cpf = %s;", (cpf,))
                 connection.commit()
                 cursor.close()
                 connection.close()
@@ -135,8 +131,22 @@ class ClientService:
         if connection:
             try:
                 cursor = connection.cursor()
-                cursor.execute("UPDATE CLIENTS SET NAME = %s, EMAIL = %s, PASSWORD = %s WHERE CPF = %s;",
-                               (client.name, client.email, client.password, cpf))
+
+                update_str = ''
+                values = []
+                for key, value in client.dict().items():
+                    if value is None or value == '':
+                        continue
+                    update_str += f"{key} = %s,"
+                    
+                    if key == 'password':
+                        values.append(ClientService.create_hash_password(value))
+                        print(ClientService.create_hash_password(value))
+                        print(value)
+                    else:
+                        values.append(value)
+
+                cursor.execute(f"UPDATE Client SET {update_str[:-1]} WHERE cpf = \'{cpf}\';", tuple(values))
                 connection.commit()
                 cursor.close()
                 connection.close()
@@ -150,12 +160,12 @@ class ClientService:
         connection = connect_to_db()
         if connection:
             cursor = connection.cursor()
-            cursor.execute("SELECT * FROM CLIENTS WHERE cpf = %s;", (cpf,))
+            cursor.execute("SELECT * FROM Client WHERE cpf = %s;", (cpf,))
             data = cursor.fetchone()
             cursor.close()
             connection.close()
             if data:
-                return Client(id=data[0], cpf=data[1], name=data[2], email=data[3], password=data[4])
+                return Client(id=data[0], cpf=data[2], name=data[1], email=data[4], password=data[3])
             else:
                 return None
         else:
@@ -166,12 +176,12 @@ class ClientService:
         connection = connect_to_db()
         if connection:
             cursor = connection.cursor()
-            cursor.execute("SELECT * FROM CLIENTS WHERE email = %s;", (email,))
+            cursor.execute("SELECT * FROM Client WHERE email = %s;", (email,))
             data = cursor.fetchone()
             cursor.close()
             connection.close()
             if data:
-                return Client(id=data[0], cpf=data[1], name=data[2], email=data[3], password=data[4])
+                return Client(id=data[0], cpf=data[2], name=data[1], email=data[4], password=data[3])
             else:
                 return None
         else:
