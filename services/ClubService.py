@@ -47,8 +47,8 @@ class ClubService:
                         palette_1 = club[12],
                         palette_2 = club[13],
                         palette_3 = club[14],
+                        club_category= club[15]
                     )
-                    
                 )
             return clubs_list
         else:
@@ -60,22 +60,27 @@ class ClubService:
         if connection:
             cursor = connection.cursor()
             cursor.execute(f"SELECT * FROM Club WHERE id={client_id};")
-            data = cursor.fetchone()
+            club = cursor.fetchone()
             cursor.close()
             connection.close()
-            if data:
-                
+            if club:
                 return Club(
-                        name = data[1],
-                        email = data[2],
-                        password = data[3],
-                        cnpj = data[4],
-                        description = data[5],
-                        address = data[6],
-                        primary_color = data[7],
-                        secondary_color = data[8],
-                        logo = data[9],
-                        background = data[10],
+                        id = club[0],
+                        name = club[1],
+                        password = club[2],
+                        description = club[3],
+                        address = club[4],
+                        logo = club[5],
+                        email = club[6],
+                        cnpj = club[7],
+                        background = club[8],
+                        titles_color = club[9],
+                        subtitles_color = club[10],
+                        buttons_color = club[11],
+                        palette_1 = club[12],
+                        palette_2 = club[13],
+                        palette_3 = club[14],
+                        club_category= club[15]
                     )
             else:
                 return None

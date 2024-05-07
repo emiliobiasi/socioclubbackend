@@ -42,3 +42,31 @@ class NewsService:
             return news_list
         else:
             raise Exception("Falha na conexão ao PostgreSQL")
+        
+    @staticmethod
+    def get_news_by_club_id(club_id: str) -> List[News]:
+        connection = connect_to_db()
+
+        if connection:
+            
+            cursor = connection.cursor()
+            cursor.execute('SELECT * FROM News WHERE fk_Club_id = %s',(club_id))
+            data = cursor.fetchall()
+            print(data)
+            cursor.close
+            news_list = []
+            for news in data:
+                news_list.append(
+                    News(
+                        id = news[0],
+                        text=news[1],
+                        image=news[2],
+                        author=news[3],
+                        club_id=news[4],
+                        publish_date=news[5],
+                        title=news[6]
+                    )
+                )
+            return news_list
+        else:
+            raise Exception("Falha na conexão ao PostgreSQL")

@@ -56,7 +56,11 @@ class ClientService:
 
         return {
             'access_token': access_token,
-            'expires_at': exp.strftime("%Y-%m-%d %H:%M:%S")
+            'expires_at': exp.strftime("%Y-%m-%d %H:%M:%S"),
+            'id':client_on_db.id,
+            'cpf': client_on_db.cpf,
+            'name': client_on_db.name,
+            'email': client_on_db.email
         }
     
     @staticmethod
