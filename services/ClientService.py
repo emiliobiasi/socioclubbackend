@@ -145,8 +145,6 @@ class ClientService:
                     
                     if key == 'password':
                         values.append(ClientService.create_hash_password(value))
-                        print(ClientService.create_hash_password(value))
-                        print(value)
                     else:
                         values.append(value)
 

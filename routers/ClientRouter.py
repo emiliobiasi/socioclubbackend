@@ -39,13 +39,14 @@ async def delete_client(cpf: str):
 @router.put("/update/{cpf}", response_model=Client)
 async def update_client(cpf: str, client: Client):
     try:
+        x
         ClientService.update_client_by_cpf(cpf, client)
         return JSONResponse(content={'data': 'Cliente atualizado com sucesso'}, status_code=200)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Erro ao atualizar cliente: {str(e)}")
 
 
-@router.get("/findById/{id}")
+@router.get("/findClientById/{id}")
 async def find_client_by_id(id: int):
     try:
         client = ClientService.find_by_id(id)
@@ -57,7 +58,7 @@ async def find_client_by_id(id: int):
         raise HTTPException(status_code=500, detail=f"Erro ao buscar cliente: {str(e)}")
 
 
-@router.get("/findByCpf/{cpf}")
+@router.get("/findClientByCpf/{cpf}")
 async def find_client_by_cpf(cpf: str):
     try:
         client = ClientService.find_client_by_cpf(cpf)
@@ -74,7 +75,7 @@ async def login(request: Request):
     
     access_data = ClientService.login(email=data["email"], password=data["password"])
     
-    return JSONResponse(
+    return JSONResponse( 
         content=access_data,
         status_code=status.HTTP_200_OK
     )

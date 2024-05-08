@@ -52,7 +52,6 @@ class NewsService:
             cursor = connection.cursor()
             cursor.execute('SELECT * FROM News WHERE fk_Club_id = %s',(club_id))
             data = cursor.fetchall()
-            print(data)
             cursor.close
             news_list = []
             for news in data:
