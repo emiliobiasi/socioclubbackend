@@ -7,20 +7,20 @@ from models.News import News
 
 router = APIRouter()
 
-@router.get('/news')
+@router.get('/product')
 async def get_news():
     try:
-        news = ProductService.get_news()
-        return JSONResponse(content={'news': [new.dict() for new in news]}, status_code=200)
+        products = ProductService.get_products()
+        return JSONResponse(content={'products': [product.dict() for product in products]}, status_code=200)
 
     except Exception as e:
         return JSONResponse(content={"message": f"Erro ao obter clubes: {str(e)}"}, status_code=500)
     
-@router.get('/getNewsByClubId/{club_id}')
+@router.get('/getProductsByClubId/{club_id}')
 async def get_news(club_id: str):
     try:
-        news = ProductService.get_news_by_club_id(club_id=club_id)
-        return JSONResponse(content={'news': [new.dict() for new in news]}, status_code=200)
+        products = ProductService.get_products_by_club_id(club_id=club_id)
+        return JSONResponse(content={'products': [product.dict() for product in products]}, status_code=200)
 
     except Exception as e:
         return JSONResponse(content={"message": f"Erro ao obter clubes: {str(e)}"}, status_code=500)
