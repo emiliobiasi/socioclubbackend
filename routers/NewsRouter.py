@@ -1,16 +1,13 @@
 from fastapi import APIRouter
 from starlette.responses import JSONResponse
-from services.ProductService import ProductService
-
-from models.News import News
-
+from services.NewsService import NewsService
 
 router = APIRouter()
 
 @router.get('/news')
 async def get_news():
     try:
-        news = ProductService.get_news()
+        news = NewsService.get_news()
         return JSONResponse(content={'news': [new.dict() for new in news]}, status_code=200)
 
     except Exception as e:
@@ -19,7 +16,7 @@ async def get_news():
 @router.get('/getNewsByClubId/{club_id}')
 async def get_news(club_id: str):
     try:
-        news = ProductService.get_news_by_club_id(club_id=club_id)
+        news = NewsService.get_news_by_club_id(club_id=club_id)
         return JSONResponse(content={'news': [new.dict() for new in news]}, status_code=200)
 
     except Exception as e:
