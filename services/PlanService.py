@@ -65,8 +65,8 @@ class PlanService:
                         priority=plan[3],
                         club_id=plan[4],
                         name=plan[5],
-                        description=plan[6],
-                        image=plan[7]
+                        description=plan[7],
+                        image=plan[6]
                     )
                 )
             return plan_list
