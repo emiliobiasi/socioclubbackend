@@ -2,7 +2,7 @@ from fastapi import FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from jose import JWTError
-from routers import ClientRouter, AuthRouter, ClubRouter, NewsRouter, ClubCategoryRouter, ProductRouter, PlanRouter
+from routers import ClientRouter, AuthRouter, ClubRouter, NewsRouter, ClubCategoryRouter, ProductRouter, PlanRouter, GameRouter
 from fastapi import Request
 
 import sys, os
@@ -27,6 +27,7 @@ app.include_router(NewsRouter.router)
 app.include_router(ClubCategoryRouter.router)
 app.include_router(ProductRouter.router)
 app.include_router(PlanRouter.router)
+app.include_router(GameRouter.router)
 
 
 

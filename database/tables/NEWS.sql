@@ -1,0 +1,10 @@
+CREATE TABLE News (
+  id SERIAL PRIMARY KEY,
+  text VARCHAR,
+  image VARCHAR,
+  author VARCHAR,
+  fk_Club_id INTEGER,
+  publish_date TIMESTAMP,
+  title VARCHAR
+);
+ALTER TABLE News ADD CONSTRAINT FK_News_2 FOREIGN KEY (fk_Club_id) REFERENCES Club (id) ON DELETE RESTRICT;

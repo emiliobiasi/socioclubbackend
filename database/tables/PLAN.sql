@@ -1,0 +1,8 @@
+CREATE TABLE Plan (
+  id SERIAL PRIMARY KEY,
+  price FLOAT,
+  discount SMALLINT,
+  priority SMALLINT,
+  fk_Club_id INTEGER
+);
+ALTER TABLE Plan ADD CONSTRAINT FK_Plan_2 FOREIGN KEY (fk_Club_id) REFERENCES Club (id) ON DELETE RESTRICT;
