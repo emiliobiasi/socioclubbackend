@@ -48,9 +48,7 @@ class PlanService:
     @staticmethod
     def get_plans_by_club_id(club_id: str) -> List[Plan]:
         connection = connect_to_db()
-
         if connection:
-            
             cursor = connection.cursor()
             cursor.execute('SELECT * FROM Plan WHERE fk_Club_id = %s',(club_id))
             data = cursor.fetchall()

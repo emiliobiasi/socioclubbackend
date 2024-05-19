@@ -55,17 +55,23 @@ CREATE TABLE Client (
   email VARCHAR
 );
 
-CREATE TABLE Game (
+CREATE TABLE Event (
   id SERIAL PRIMARY KEY ,
-  away_team VARCHAR,
+  event_name VARCHAR,
+  description VARCHAR,
+  image VARCHAR,
   full_price INTEGER,
-  game_date TIMESTAMP,
+  event_date TIMESTAMP,
   tickets_away INTEGER,
   tickets_home INTEGER,
   fk_Club_id INTEGER
 );
 
-CREATE TABLE Ticket (qr_code VARCHAR PRIMARY KEY, fk_Game_id INTEGER );
+CREATE TABLE Ticket (
+  qr_code VARCHAR PRIMARY KEY,
+  fk_Event_id INTEGER,
+  fk_Client_id INTEGER 
+  );
 
 CREATE TABLE ProductCategory (id SERIAL PRIMARY KEY , name VARCHAR);
 
@@ -93,9 +99,9 @@ ALTER TABLE Product ADD CONSTRAINT FK_Product_2 FOREIGN KEY (fk_Club_id) REFEREN
 
 ALTER TABLE Product ADD CONSTRAINT FK_Product_3 FOREIGN KEY (fk_ProductCategory_id) REFERENCES ProductCategory (id) ON DELETE RESTRICT;
 
-ALTER TABLE Game ADD CONSTRAINT FK_Game_2 FOREIGN KEY (fk_Club_id) REFERENCES Club (id) ON DELETE RESTRICT;
+ALTER TABLE Event ADD CONSTRAINT FK_Event_2 FOREIGN KEY (fk_Club_id) REFERENCES Club (id) ON DELETE RESTRICT;
 
-ALTER TABLE Ticket ADD CONSTRAINT FK_Ticket_2 FOREIGN KEY (fk_Game_id) REFERENCES Game (id) ON DELETE RESTRICT;
+ALTER TABLE Ticket ADD CONSTRAINT FK_Ticket_2 FOREIGN KEY (fk_Event_id) REFERENCES Event (id) ON DELETE RESTRICT;
 
 ALTER TABLE Associate ADD CONSTRAINT FK_Associate_1 FOREIGN KEY (fk_Club_id) REFERENCES Club (id) ON DELETE NO ACTION;
 
@@ -209,10 +215,10 @@ INSERT INTO Product (
   1
 );
 
-INSERT INTO Game(
+INSERT INTO Event(
   away_team,
   full_price,
-  game_date,
+  event_date,
   tickets_away,
   tickets_home,
   fk_Club_id
