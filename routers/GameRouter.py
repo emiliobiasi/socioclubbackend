@@ -16,7 +16,7 @@ async def get_games():
         return JSONResponse(content={"message": f"Erro ao obter games: {str(e)}"}, status_code=500)
 
 
-@router.get("/game/{id}")
+@router.get("/getGameByClubId/{id}")
 async def find_game_by_id(id: int):
     try:
         game = GameService.find_by_id(id)
