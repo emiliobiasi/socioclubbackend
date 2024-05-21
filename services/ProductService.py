@@ -53,8 +53,9 @@ class ProductService:
             cursor = connection.cursor()
             cursor.execute('SELECT * FROM Product WHERE fk_Club_id = %s',(club_id))
             data = cursor.fetchall()
-            cursor.close
+            cursor.close()
             product_list = []
+            print(data)
             for product in data:
                 product_list.append(
                     Product(

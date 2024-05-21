@@ -93,7 +93,7 @@ class ClientService:
             cursor.close()
             connection.close()
             if data:
-                return Client(id=data[0], cpf=data[2], name=data[1], email=data[4], password=data[3])
+                return Client(id=data[0], cpf=data[1], name=data[2], email=data[3], password=data[4])
             else:
                 return None
         else:
