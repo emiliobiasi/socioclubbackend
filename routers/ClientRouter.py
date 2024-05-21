@@ -39,7 +39,6 @@ async def delete_client(cpf: str):
 @router.put("/update/{cpf}", response_model=Client)
 async def update_client(cpf: str, client: Client):
     try:
-        x
         ClientService.update_client_by_cpf(cpf, client)
         return JSONResponse(content={'data': 'Cliente atualizado com sucesso'}, status_code=200)
     except Exception as e:
@@ -80,3 +79,20 @@ async def login(request: Request):
         status_code=status.HTTP_200_OK
     )
 
+@router.post('/associate')
+async def associate(request: Request):
+    try:
+        data = await request.json()
+
+        ClientService.associate(client_id=data['cliend_id'], plan_id=data['plan_id'])
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erro ao vincular cliente com plano: {str(e)}")
+    
+@router.post('/freeAssociate')
+async def free_associate(request: Request):
+    try:
+        data = await request.json()
+
+        ClientService.free_associate(club_id=data['club_id'], client_id=data['client_id'])
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erro ao vincular cliente com plano: {str(e)}")

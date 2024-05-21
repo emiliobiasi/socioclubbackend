@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import List, Optional
 from fastapi import status, HTTPException
 from models.Client import Client
@@ -32,6 +32,7 @@ class ClientService:
     def login(email:str, password:str , expires_at=30):
         
         client_on_db = ClientService.find_client_by_email(email)
+
 
         if client_on_db is None:
             raise HTTPException(
@@ -186,6 +187,39 @@ class ClientService:
                 return Client(id=data[0], cpf=data[2], name=data[1], email=data[4], password=data[3])
             else:
                 return None
+        else:
+            raise Exception("Falha na conexão ao PostgreSQL")
+        
+    @staticmethod
+    def associate(client_id: str, plan_id: str):
+        connection = connect_to_db()
+        if connection:
+            cursor = connection.cursor()
+            now = datetime.now(timezone.utc)
+            cursor.execute(
+                'INSERT INTO Associate (fk_Client_id, fk_Plan_id ,end_date) VALUES (%s, %s, %s)',
+                (client_id, plan_id, now)
+            )
+        else:
+            raise Exception("Falha na conexão ao PostgreSQL")
+        
+    @staticmethod
+    def free_associate(client_id: int, club_id: int):
+        connection = connect_to_db()
+        if connection:
+            
+            cursor = connection.cursor()
+            cursor.execute('SELECT * FROM Plan WHERE fk_Club_id=%s AND price = 0',(str(club_id)))
+            
+            data = cursor.fetchone()
+            print(data[0])
+            cursor.execute(
+                'INSERT INTO Associate (fk_Client_id, fk_Plan_id ,end_date) VALUES (%s, %s, %s)',
+                (client_id, data[0], datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+            )
+            connection.commit()
+            cursor.close()
+            connection.close()
         else:
             raise Exception("Falha na conexão ao PostgreSQL")
 
