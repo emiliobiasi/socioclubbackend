@@ -35,6 +35,6 @@ async def get_following_club(client_id: str):
 
         clubs = ClubService.get_following_clubs(client_id)
         
-        return JSONResponse(content={'clubs': clubs}, status_code=200)
+        return JSONResponse(content={'clubs': [club.dict() for club in clubs]}, status_code=200)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Erro ao retornar clubes: {str(e)}")

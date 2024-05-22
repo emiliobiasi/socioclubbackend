@@ -78,7 +78,7 @@ class ClientService:
             clients_list = []
             for client in data:
                 clients_list.append(
-                    Client(id=client[0], cpf=client[2], name=client[1], email=client[4], password=client[3]))
+                    Client(id=client[0], cpf=client[1], name=client[2], email=client[3], password=client[4]))
             return clients_list
         else:
             raise Exception("Falha na conexão ao PostgreSQL")
@@ -168,7 +168,7 @@ class ClientService:
             cursor.close()
             connection.close()
             if data:
-                return Client(id=data[0], cpf=data[2], name=data[1], email=data[4], password=data[3])
+                return Client(id=data[0], cpf=data[1], name=data[2], email=data[3], password=data[4])
             else:
                 return None
         else:
@@ -184,7 +184,7 @@ class ClientService:
             cursor.close()
             connection.close()
             if data:
-                return Client(id=data[0], cpf=data[2], name=data[1], email=data[4], password=data[3])
+                return Client(id=data[0], cpf=data[1], name=data[2], email=data[3], password=data[4])
             else:
                 return None
         else:
