@@ -89,7 +89,7 @@ class ClubService:
     
     
     @staticmethod
-    def get_following_clubs(client_id: str):
+    def get_following_clubs(client_id: str) -> List[Club]:
         connection = connect_to_db()
         if connection:
             cursor = connection.cursor()
@@ -100,14 +100,31 @@ class ClubService:
             )
 
             data = cursor.fetchall()
-            clubs_id = []
+            clubs = []
             
-            for club_id in data:
-                clubs_id.append(
-                    club_id
+            for club in data:
+                clubs.append(
+                    Club(
+                        id = club[0],
+                        name = club[1],
+                        password = club[2],
+                        description = club[3],
+                        address = club[4],
+                        logo = club[5],
+                        email = club[6],
+                        cnpj = club[7],
+                        background = club[8],
+                        titles_color = club[9],
+                        subtitles_color = club[10],
+                        buttons_color = club[11],
+                        palette_1 = club[12],
+                        palette_2 = club[13],
+                        palette_3 = club[14],
+                        club_category= club[15]
+                    )
                 )
             cursor.close()
             connection.close()
-            return clubs_id
+            return clubs
         else:
             raise Exception('Falha na conexão ao PostgreSQL')

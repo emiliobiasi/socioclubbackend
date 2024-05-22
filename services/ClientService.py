@@ -213,7 +213,7 @@ class ClientService:
             cursor = connection.cursor()
             cursor.execute(
                 'INSERT INTO Follow (fk_Client_id, fk_Club_id) VALUES (%s, %s)',
-                (club_id, client_id)
+                (client_id, club_id)
             )
             connection.commit()
             cursor.close()
