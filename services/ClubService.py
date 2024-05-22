@@ -86,3 +86,28 @@ class ClubService:
                 return None
         else:
             raise Exception("Falha na conexão ao PostgreSQL")
+    
+    
+    @staticmethod
+    def get_following_clubs(client_id: str):
+        connection = connect_to_db()
+        if connection:
+            cursor = connection.cursor()
+
+            cursor.execute(
+                'SELECT c.* FROM Club c JOIN Follow f ON c.id = f.fk_Club_id WHERE f.fk_Client_id = %s',
+                (client_id)
+            )
+
+            data = cursor.fetchall()
+            clubs_id = []
+            
+            for club_id in data:
+                clubs_id.append(
+                    club_id
+                )
+            cursor.close()
+            connection.close()
+            return clubs_id
+        else:
+            raise Exception('Falha na conexão ao PostgreSQL')

@@ -88,11 +88,23 @@ async def associate(request: Request):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Erro ao vincular cliente com plano: {str(e)}")
     
-@router.post('/freeAssociate')
-async def free_associate(request: Request):
+@router.post('/followClub')
+async def follow_club(request: Request):
     try:
         data = await request.json()
 
-        ClientService.free_associate(club_id=data['club_id'], client_id=data['client_id'])
+        ClientService.follow_club(club_id=data['club_id'], client_id=data['client_id'])
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Erro ao vincular cliente com plano: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Erro ao seguir clube: {str(e)}")
+    
+@router.delete('/unfollowClub')
+async def unfollow_club(request: Request):
+    try:
+        data = await request.json()
+
+        ClientService.unfollow_club(data['club_id'], data['client_id'])
+
+        return JSONResponse(status_code=200, content={'message': 'Sucesso ao deixar de seguir clube'})
+    
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f'Erro ao deixar de seguir: {str(e)}')

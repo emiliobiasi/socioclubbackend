@@ -200,28 +200,42 @@ class ClientService:
                 'INSERT INTO Associate (fk_Client_id, fk_Plan_id ,end_date) VALUES (%s, %s, %s)',
                 (client_id, plan_id, now)
             )
-        else:
-            raise Exception("Falha na conexão ao PostgreSQL")
-        
-    @staticmethod
-    def free_associate(client_id: int, club_id: int):
-        connection = connect_to_db()
-        if connection:
-            
-            cursor = connection.cursor()
-            cursor.execute('SELECT * FROM Plan WHERE fk_Club_id=%s AND price = 0',(str(club_id)))
-            
-            data = cursor.fetchone()
-            print(data[0])
-            cursor.execute(
-                'INSERT INTO Associate (fk_Client_id, fk_Plan_id ,end_date) VALUES (%s, %s, %s)',
-                (client_id, data[0], datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-            )
             connection.commit()
             cursor.close()
             connection.close()
         else:
             raise Exception("Falha na conexão ao PostgreSQL")
+        
+    @staticmethod
+    def follow_club(club_id: str, client_id: str):
+        connection = connect_to_db()
+        if connection:
+            cursor = connection.cursor()
+            cursor.execute(
+                'INSERT INTO Follow (fk_Client_id, fk_Club_id) VALUES (%s, %s)',
+                (club_id, client_id)
+            )
+            connection.commit()
+            cursor.close()
+            connection.close()
+        else:
+            raise Exception('Falha na conexão ao PostgreSQL')
+        
+    @staticmethod
+    def unfollow_club(club_id: str, client_id:str):
+        connection = connect_to_db()
+        if connection:
+            cursor = connection.cursor()
+            cursor.execute(
+                'DELETE FROM Follow WHERE fk_Client_id = %s AND fk_Club_id = %s',
+                (client_id, club_id)
+            )
+            connection.commit()
+            cursor.close()
+            connection.close()
+        else:
+            raise Exception('Falha na conexão ao PostgreSQL')
+
 
     def create_hash_password(password: str) -> str:
         salt = bcrypt.gensalt()
