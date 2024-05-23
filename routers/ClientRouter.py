@@ -101,7 +101,6 @@ async def follow_club(request: Request):
 async def unfollow_club(request: Request):
     try:
         data = await request.json()
-
         ClientService.unfollow_club(club_id=data['club_id'], client_id=data['client_id'])
 
         return JSONResponse(status_code=200, content={'message': 'Sucesso ao deixar de seguir clube'})

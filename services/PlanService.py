@@ -27,7 +27,7 @@ class PlanService:
             data = cursor.fetchall()
             cursor.close
             plan_list = []
-            print(data)
+            
             for plan in data:
                 plan_list.append(
                     Plan(

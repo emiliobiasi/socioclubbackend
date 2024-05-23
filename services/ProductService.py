@@ -27,7 +27,7 @@ class ProductService:
             data = cursor.fetchall()
             cursor.close
             product_list = []
-            print(data)
+            
             for product in data:
                 product_list.append(
                     Product(
@@ -55,7 +55,7 @@ class ProductService:
             data = cursor.fetchall()
             cursor.close()
             product_list = []
-            print(data)
+            
             for product in data:
                 product_list.append(
                     Product(
