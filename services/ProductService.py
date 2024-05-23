@@ -71,3 +71,50 @@ class ProductService:
             return product_list
         else:
             raise Exception("Falha na conexão ao PostgreSQL")
+        
+    @staticmethod
+    def buy_product(client_id: str, product_id:str):
+        connection = connect_to_db()
+        if connection:
+            cursor = connection.cursor()
+            cursor.execute(
+                'INSERT INTO Buy (fk_Client_id, fk_Product_id) VALUES (%s, %s)',
+                (client_id, product_id)
+            )
+            connection.commit()
+            cursor.close()
+            connection.close()
+        else:
+            raise Exception('Falha na conexão ao PostgreSQL')
+        
+    @staticmethod
+    def get_bought_products_by_client_id(client_id:str) -> List[Product]:
+        connection = connect_to_db()
+        if connection:
+            cursor = connection.cursor()
+            cursor.execute(
+                'SELECT p.* FROM Product p JOIN Buy b ON p.id = b.fk_Product_id WHERE b.fk_Client_id = %s',
+                (client_id)
+            )
+            data = cursor.fetchall()
+            cursor.close()
+            connection.close()
+
+            product_list = []
+            
+            for product in data:
+                product_list.append(
+                    Product(
+                        id = product[0],
+                        name=product[1],
+                        description=product[2],
+                        price=product[3],
+                        club_id=product[4],
+                        category_id=product[5],
+                        image=product[6]
+                    )
+                )
+            
+            return product_list
+        else:
+            raise Exception('Falha na conexão ao PostgreSQL')

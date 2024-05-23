@@ -1,7 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from starlette.responses import JSONResponse
 from fastapi import status
-from fastapi import Request
 from services.ClubService import ClubService
 
 from models.Club import Club
