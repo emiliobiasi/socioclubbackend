@@ -117,4 +117,13 @@ async def get_current_associate(client_id: str):
 
         return JSONResponse(status_code=200, content={'message': dict})
     except Exception as e:
-        return JSONResponse(status_code=500, content={'message': f'Erro ao retornar plano atual: {str(e)}'})
+        return JSONResponse(status_code=500, content={'message': f'Erro ao retornar planos atuais: {str(e)}'})
+
+@router.get('/getAllAssociate/{client_id}')
+async def get_current_associate(client_id: str):
+    try:
+        dict = ClientService.get_all_associate(client_id=client_id)
+
+        return JSONResponse(status_code=200, content={'message': dict})
+    except Exception as e:
+        return JSONResponse(status_code=500, content={'message': f'Erro ao retornar todos os planos: {str(e)}'})
