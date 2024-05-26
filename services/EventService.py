@@ -1,5 +1,4 @@
-import json
-from typing import List, Optional
+from typing import List
 from database.connection.Connection import connect_to_db
 import os
 from dotenv import load_dotenv

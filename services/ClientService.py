@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 from typing import List, Optional
 from fastapi import status, HTTPException
 from models.Client import Client
@@ -6,8 +6,9 @@ from database.connection.Connection import connect_to_db
 import bcrypt
 import os
 from dotenv import load_dotenv
-from jose import jwt, JWTError
+from jose import jwt
 from dotenv import dotenv_values
+from dateutil.relativedelta import relativedelta
 
 #Fazer tratamento de erro nos services usando HTTPException
 #Ver Exceptions que podem ser lançadas pelo postgres
@@ -195,11 +196,14 @@ class ClientService:
         connection = connect_to_db()
         if connection:
             cursor = connection.cursor()
-            now = datetime.now(timezone.utc)
+
+            end_date = datetime.now() + relativedelta(months= 1)
+
             cursor.execute(
                 'INSERT INTO Associate (fk_Client_id, fk_Plan_id ,end_date) VALUES (%s, %s, %s)',
-                (client_id, plan_id, now)
+                (client_id, plan_id, end_date.strftime('%Y-%m-%d'))
             )
+
             connection.commit()
             cursor.close()
             connection.close()
@@ -235,7 +239,32 @@ class ClientService:
             connection.close()
         else:
             raise Exception('Falha na conexão ao PostgreSQL')
+    
+    @staticmethod
+    def get_current_associate(client_id: str):
+        connection = connect_to_db()
+        if connection:
+            cursor = connection.cursor()
+            date = datetime.now()
+            cursor.execute(
+                'SELECT p.*, a.end_date FROM Plan p INNER JOIN Associate a ON a.fk_Plan_id = p.id WHERE a.fk_Client_id = %s AND a.end_date > %s',
+                (client_id, date.strftime('%Y-%m-%d'))
+            )
+            data = cursor.fetchone()
 
+            if data:
+                return {
+                    'plan_id': data[0],
+                    'price': data[1],
+                    'discount': data[2],
+                    'priority': data[3],
+                    'name': data[5],
+                    'description': data[6],
+                    'image': data[7],
+                    'end_date': data[8].strftime('%Y-%m-%d')
+                }
+            else:
+                return {}
 
     def create_hash_password(password: str) -> str:
         salt = bcrypt.gensalt()

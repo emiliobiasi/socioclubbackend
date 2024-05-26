@@ -84,7 +84,8 @@ async def associate(request: Request):
     try:
         data = await request.json()
 
-        ClientService.associate(client_id=data['cliend_id'], plan_id=data['plan_id'])
+        ClientService.associate(client_id=data['client_id'], plan_id=data['plan_id'])
+        return JSONResponse(status_code=200, content={'message': 'Sucesso ao associar plano com cliente'})
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Erro ao vincular cliente com plano: {str(e)}")
     
@@ -94,6 +95,7 @@ async def follow_club(request: Request):
         data = await request.json()
 
         ClientService.follow_club(club_id=data['club_id'], client_id=data['client_id'])
+        return JSONResponse(status_code=200, content={'message': 'Sucesso ao seguir clube'})
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Erro ao seguir clube: {str(e)}")
     
@@ -107,3 +109,12 @@ async def unfollow_club(request: Request):
     
     except Exception as e:
         raise HTTPException(status_code=500, detail=f'Erro ao deixar de seguir: {str(e)}')
+    
+@router.get('/getCurrentAssociate/{client_id}')
+async def get_current_associate(client_id: str):
+    try:
+        dict = ClientService.get_current_associate(client_id=client_id)
+
+        return JSONResponse(status_code=200, content={'message': dict})
+    except Exception as e:
+        return JSONResponse(status_code=500, content={'message': f'Erro ao retornar plano atual: {str(e)}'})

@@ -4,6 +4,8 @@ from database.connection.Connection import connect_to_db
 import os
 from dotenv import load_dotenv
 from dotenv import dotenv_values
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
 
 projeto_raiz = os.getcwd()
 caminho_env = os.path.join(projeto_raiz, '.env')
@@ -70,3 +72,4 @@ class PlanService:
             return plan_list
         else:
             raise Exception("Falha na conexão ao PostgreSQL")
+        

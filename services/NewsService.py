@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List
 from models.News import News
 from database.connection.Connection import connect_to_db
 import os
