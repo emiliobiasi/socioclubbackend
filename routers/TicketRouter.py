@@ -9,7 +9,7 @@ async def create_ticket(request: Request):
     try:
         data = await request.json()
 
-        TicketService.create_ticket(event_id=data['event_id'], club_id=data['club_id'])
+        TicketService.create_ticket(event_id=data['event_id'], club_id=data['club_id'], client_id=data['client_id'])
         return JSONResponse(content={'message': 'Ticket criado com sucesso!'}, status_code=201)
     except Exception as e:
         return JSONResponse(content={'message': f'Erro ao criar Ticket: {str(e)}'}, status_code=500)
