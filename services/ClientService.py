@@ -250,21 +250,53 @@ class ClientService:
                 'SELECT p.*, a.end_date FROM Plan p INNER JOIN Associate a ON a.fk_Plan_id = p.id WHERE a.fk_Client_id = %s AND a.end_date > %s',
                 (client_id, date.strftime('%Y-%m-%d'))
             )
-            data = cursor.fetchone()
+            data = cursor.fetchall()
+            ret = []
 
             if data:
-                return {
-                    'plan_id': data[0],
-                    'price': data[1],
-                    'discount': data[2],
-                    'priority': data[3],
-                    'name': data[5],
-                    'description': data[6],
-                    'image': data[7],
-                    'end_date': data[8].strftime('%Y-%m-%d')
-                }
-            else:
-                return {}
+                for plan in data:
+                    ret.append(
+                        {
+                            'plan_id': plan[0],
+                            'price': plan[1],
+                            'discount': plan[2],
+                            'priority': plan[3],
+                            'name': plan[5],
+                            'description': plan[6],
+                            'image': plan[7],
+                            'end_date': plan[8].strftime('%Y-%m-%d')
+                        }
+                    )
+            return ret
+        
+    @staticmethod
+    def get_all_associate(client_id: str):
+        connection = connect_to_db()
+        if connection:
+            cursor = connection.cursor()
+            date = datetime.now()
+            cursor.execute(
+                'SELECT p.*, a.end_date FROM Plan p INNER JOIN Associate a ON a.fk_Plan_id = p.id WHERE a.fk_Client_id = %s',
+                (client_id)
+            )
+            data = cursor.fetchall()
+            ret = []
+
+            if data:
+                for plan in data:
+                    ret.append(
+                        {
+                            'plan_id': plan[0],
+                            'price': plan[1],
+                            'discount': plan[2],
+                            'priority': plan[3],
+                            'name': plan[5],
+                            'description': plan[6],
+                            'image': plan[7],
+                            'end_date': plan[8].strftime('%Y-%m-%d')
+                        }
+                    )
+            return ret
 
     def create_hash_password(password: str) -> str:
         salt = bcrypt.gensalt()
