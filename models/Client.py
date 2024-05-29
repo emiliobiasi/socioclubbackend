@@ -11,6 +11,13 @@ class Client(BaseModel):
     email: str
     password: str
 
+    #String com nome dos atributos
+    dictId = 'id'
+    dictCpf = 'cpf'
+    dictName = 'name'
+    dictEmail = 'email'
+    dictPassword = 'password'
+
 
     # @validator('email')
     # def validate_email(self, value):

@@ -22,3 +22,12 @@ async def get_all_tickets(client_id: str):
         return JSONResponse(content={'message': [ticket.dict() for ticket in tickets]}, status_code=200)
     except Exception as e:
         return JSONResponse(content={'message': f'Erro ao retornar tickets: {str(e)}'})
+    
+@router.get('/getValidTicketsByClientId/{client_id}')
+async def get_valid_tickets_by_client_id(client_id: str):
+    try:
+        event_and_ticket = TicketService.get_valid_tickets_by_client_id(client_id=client_id)
+
+        return JSONResponse(content={'message': event_and_ticket}, status_code=200)
+    except Exception as e:
+        return JSONResponse(content={'message': f'Erro ao retornar tickets: {str(e)}'}, status_code=500)

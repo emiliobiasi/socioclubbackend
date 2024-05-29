@@ -1,6 +1,6 @@
 import os
 from dotenv import load_dotenv, dotenv_values
-import datetime
+from datetime import datetime
 from database.connection.Connection import connect_to_db
 import random, string
 from models.Event import Event
@@ -60,8 +60,8 @@ class TicketService:
                 )
 
                 cursor.execute(
-                    'INSERT INTO Buy (fk_Client_id, fk_Ticket_qr_code, date) VALUES (%s, %s, %s)',
-                    (client_id, qr_code, datetime.now())
+                    'INSERT INTO Buy (fk_Client_id, fk_Ticket_qr_code) VALUES (%s, %s)',
+                    (client_id, qr_code)
                 )
 
                 cursor.execute(
@@ -84,8 +84,6 @@ class TicketService:
         if connection:
             try:
                 cursor = connection.cursor()
-
-                print(client_id)
 
                 cursor.execute(
                     '''
@@ -123,3 +121,43 @@ class TicketService:
         else:
             raise Exception('Falha na conexão ao PostgreSQL')
     
+    @staticmethod
+    def get_valid_tickets_by_client_id(client_id: str):
+        connection = connect_to_db()
+        if connection:
+            cursor = connection.cursor()
+
+            now = datetime.now()
+
+            cursor.execute(
+                '''
+                    SELECT e.event_name, e.image, e.event_date, e.description, e.full_price, i.qr_code
+                    FROM Event e
+                    INNER JOIN Ticket i ON i.fk_Event_id = e.id
+                    INNER JOIN Buy b ON b.fk_Ticket_qr_code = i.qr_code
+                    WHERE b.fk_Client_id = %s AND e.event_date > %s
+                ''',
+                (client_id, now.strftime('%Y-%m-%d %H:%M:%S'))
+            )
+
+            data = cursor.fetchall()
+            event_and_ticket = []
+
+            if data:
+                for dt in data:
+                    event_and_ticket.append(
+                        {
+                            'eventName': dt[0],
+                            'image': dt[1],
+                            'eventDate': dt[2].strftime("%Y-%m-%d %H:%M:%S"),
+                            'description': dt[3],
+                            'fullPrice': dt[4],
+                            'qr_code': dt[5]
+                        }
+                    )
+
+            return event_and_ticket
+
+            
+            
+
