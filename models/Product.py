@@ -1,3 +1,4 @@
+from typing import ClassVar
 from pydantic import BaseModel
 
 class Product(BaseModel):
@@ -10,10 +11,10 @@ class Product(BaseModel):
     club_id: int
 
     #String com nome dos atributos
-    dictId = 'id'
-    dictName = 'name'
-    dictDescription = 'description'
-    dictPrice = 'price'
-    dictImage = 'image'
-    dictCategory_id = 'category_id'
-    dictClub_id = 'club_id'
+    dictId: ClassVar[str] = 'id'
+    dictName: ClassVar[str] = 'name'
+    dictDescription: ClassVar[str] = 'description'
+    dictPrice: ClassVar[str] = 'price'
+    dictImage: ClassVar[str] = 'image'
+    dictCategory_id: ClassVar[str] = 'category_id'
+    dictClub_id: ClassVar[str] = 'club_id'

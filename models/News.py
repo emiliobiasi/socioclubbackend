@@ -1,5 +1,7 @@
 from datetime import datetime
 from pydantic import BaseModel
+from typing import ClassVar
+
 
 class News(BaseModel):
     id: int
@@ -11,13 +13,13 @@ class News(BaseModel):
     title: str
 
     #String com nome dos atributos
-    dictText = 'text'
-    dictId = 'id'
-    dictImage = 'image'
-    dictAuthor = 'author'
-    dictClub_id = 'club_id'
-    dictPublish_date = 'publish_date'
-    dictTitle = 'title'
+    dictText: ClassVar[str] = 'text'
+    dictId: ClassVar[str] = 'id'
+    dictImage: ClassVar[str] = 'image'
+    dictAuthor: ClassVar[str] = 'author'
+    dictClub_id: ClassVar[str] = 'club_id'
+    dictPublish_date: ClassVar[str] = 'publish_date'
+    dictTitle: ClassVar[str] = 'title'
 
 
     def dict(self, *args, **kwargs):

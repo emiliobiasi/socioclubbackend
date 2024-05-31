@@ -1,6 +1,8 @@
 import json
 from datetime import datetime
 from pydantic import BaseModel
+from typing import ClassVar
+
 class Event(BaseModel):
     id: int
     eventName: str
@@ -13,15 +15,15 @@ class Event(BaseModel):
     fkClubId: int
 
     #String com nome dos atributos
-    dictId = 'id'
-    dictEventName = 'eventName'
-    dictDescription = 'description'
-    dictImage = 'image'
-    dictFullPrice = 'fullPrice'
-    dictEventDate = 'eventDate'
-    dictTicketsAway = 'ticketsAway'
-    dictTicketsHome = 'ticketsHome'
-    dictFkClubId = 'fkClubId'
+    dictId: ClassVar[str] = 'id'
+    dictEventName: ClassVar[str] = 'eventName'
+    dictDescription: ClassVar[str] = 'description'
+    dictImage: ClassVar[str] = 'image'
+    dictFullPrice: ClassVar[str] = 'fullPrice'
+    dictEventDate: ClassVar[str] = 'eventDate'
+    dictTicketsAway: ClassVar[str] = 'ticketsAway'
+    dictTicketsHome: ClassVar[str] = 'ticketsHome'
+    dictFkClubId: ClassVar[str] = 'fkClubId'
 
 
     def dict(self, *args, **kwargs):

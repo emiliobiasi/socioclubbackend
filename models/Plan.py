@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from typing import ClassVar
 
 class Plan(BaseModel):
     id:int
@@ -11,11 +12,11 @@ class Plan(BaseModel):
     club_id: int
 
     #String com nome dos atributos
-    dictId = 'id'
-    dictName = 'name'
-    dictDescription = 'description'
-    dictImage = 'image'
-    dictPrice = 'price'
-    dictDiscount = 'discount'
-    dictPriority = 'priority'
-    dictClub_id = 'club_id'
+    dictId: ClassVar[str] = 'id'
+    dictName: ClassVar[str] = 'name'
+    dictDescription: ClassVar[str] = 'description'
+    dictImage: ClassVar[str] = 'image'
+    dictPrice: ClassVar[str] = 'price'
+    dictDiscount: ClassVar[str] = 'discount'
+    dictPriority: ClassVar[str] = 'priority'
+    dictClub_id: ClassVar[str] = 'club_id'

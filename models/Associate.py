@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 import datetime
+from typing import ClassVar
 
 class Associate(BaseModel):
     id: int
@@ -7,10 +8,10 @@ class Associate(BaseModel):
     plan_id: int
     end_date: datetime
 
-    dictId = 'id'
-    dictClient_id = 'client_id'
-    dictPlan_id = 'plan_id'
-    dictEnd_date = 'end_date'
+    dictId: ClassVar[str] = 'id'
+    dictClient_id: ClassVar[str] = 'client_id'
+    dictPlan_id: ClassVar[str] = 'plan_id'
+    dictEnd_date: ClassVar[str] = 'end_date'
 
     def dict(self, *args, **kwargs):
         d = super().dict(*args, **kwargs)
