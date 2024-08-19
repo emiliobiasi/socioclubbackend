@@ -2,9 +2,9 @@ from fastapi import FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from jose import JWTError
-from routers import ClientRouter, AuthRouter
+from routers import ClientRouter, AuthRouter, ClubRouter, EventRouter, NewsRouter, ClubCategoryRouter, ProductRouter, PlanRouter, TicketRouter
 from fastapi import Request
-from services.ClientService import ClientService
+
 import sys, os
 from dotenv import load_dotenv
 from jose import jwt
@@ -22,6 +22,13 @@ app = FastAPI()
 
 app.include_router(ClientRouter.router)
 app.include_router(AuthRouter.router)
+app.include_router(ClubRouter.router)
+app.include_router(NewsRouter.router)
+app.include_router(ClubCategoryRouter.router)
+app.include_router(ProductRouter.router)
+app.include_router(PlanRouter.router)
+app.include_router(EventRouter.router)
+app.include_router(TicketRouter.router)
 
 app.add_middleware(
     CORSMiddleware,
@@ -31,40 +38,38 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.middleware('http')
-async def verify_token(request: Request, call_next):
+# @app.middleware('http')
+# async def verify_token(request: Request, call_next):
     
-    if request.url.path == "/login" or request.url.path == "/register":
-            response = await call_next(request)
-            return response
-    try:
-            access_token = request.headers.get("Authorization")
+#     if request.url.path == "/login" or request.url.path == "/register":
+#             response = await call_next(request)
+#             return response
+#     try:
+#             access_token = request.headers.get("Authorization")
 
-            print(access_token)
+#             if access_token is None:
+#                 return JSONResponse(
+#                     status_code=status.HTTP_401_UNAUTHORIZED,
+#                     content={'error': 'Invalid token'}
+#                 )
 
-            if access_token is None:
-                return JSONResponse(
-                    status_code=status.HTTP_401_UNAUTHORIZED,
-                    content={'error': 'Invalid token'}
-                )
-
-            data = jwt.decode(access_token.split(' ')[1], SECRET_KEY, algorithms=[ALGORITHM])
-    except JWTError:
-        return JSONResponse(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            content={'error': 'Invalid token'}
-        )
+#             data = jwt.decode(access_token.split(' ')[1], SECRET_KEY, algorithms=[ALGORITHM])
+#     except JWTError:
+#         return JSONResponse(
+#             status_code=status.HTTP_401_UNAUTHORIZED,
+#             content={'error': 'Invalid token'}
+#         )
         
-    client_on_db = ClientService.find_client_by_email(data['sub'])
+#     client_on_db = ClientService.find_client_by_email(data['sub'])
 
-    if client_on_db is None:
-        return JSONResponse(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            content={'error': 'Invalid token'}
-        )
+#     if client_on_db is None:
+#         return JSONResponse(
+#             status_code=status.HTTP_401_UNAUTHORIZED,
+#             content={'error': 'Invalid token'}
+#         )
     
-    response = await call_next(request)
-    return response
+#     response = await call_next(request)
+#     return response
 
 
 def run(host="localhost", port=8000):

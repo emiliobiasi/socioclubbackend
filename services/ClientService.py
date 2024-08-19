@@ -6,8 +6,9 @@ from database.connection.Connection import connect_to_db
 import bcrypt
 import os
 from dotenv import load_dotenv
-from jose import jwt, JWTError
+from jose import jwt
 from dotenv import dotenv_values
+from dateutil.relativedelta import relativedelta
 
 #Fazer tratamento de erro nos services usando HTTPException
 #Ver Exceptions que podem ser lançadas pelo postgres
@@ -33,15 +34,12 @@ class ClientService:
         
         client_on_db = ClientService.find_client_by_email(email)
 
-        print(client_on_db)
 
         if client_on_db is None:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED, 
                 detail='Email ou senha incorretos',
             )
-        
-        print(ClientService.verify_password(password, client_on_db.password))
         
         if not ClientService.verify_password(password, client_on_db.password):
             raise HTTPException(
@@ -60,7 +58,11 @@ class ClientService:
 
         return {
             'access_token': access_token,
-            'expires_at': exp.strftime("%Y-%m-%d %H:%M:%S")
+            'expires_at': exp.strftime("%Y-%m-%d %H:%M:%S"),
+            'id':client_on_db.id,
+            'cpf': client_on_db.cpf,
+            'name': client_on_db.name,
+            'email': client_on_db.email
         }
     
     @staticmethod
@@ -70,7 +72,7 @@ class ClientService:
         
         if connection:
             cursor = connection.cursor()
-            cursor.execute("SELECT * FROM CLIENTS;")
+            cursor.execute("SELECT * FROM Client;")
             data = cursor.fetchall()
             cursor.close()
             connection.close()
@@ -87,7 +89,7 @@ class ClientService:
         connection = connect_to_db()
         if connection:
             cursor = connection.cursor()
-            cursor.execute(f"SELECT * FROM CLIENTS WHERE id={client_id};")
+            cursor.execute(f"SELECT * FROM Client WHERE id={client_id};")
             data = cursor.fetchone()
             cursor.close()
             connection.close()
@@ -104,8 +106,8 @@ class ClientService:
         if connection:
             try:
                 cursor = connection.cursor()
-                cursor.execute("INSERT INTO clients (name, email, password) VALUES (%s, %s, %s);",
-                               (client.name, client.email, ClientService.create_hash_password(client.password)))
+                cursor.execute("INSERT INTO Client (name, email, password, cpf) VALUES (%s, %s, %s, %s);",
+                               (client.name, client.email, ClientService.create_hash_password(client.password), client.cpf))
                 connection.commit()
                 cursor.close()
                 connection.close()
@@ -120,7 +122,7 @@ class ClientService:
         if connection:
             try:
                 cursor = connection.cursor()
-                cursor.execute("DELETE FROM CLIENTS WHERE cpf = %s;", (cpf,))
+                cursor.execute("DELETE FROM Client WHERE cpf = %s;", (cpf,))
                 connection.commit()
                 cursor.close()
                 connection.close()
@@ -135,8 +137,20 @@ class ClientService:
         if connection:
             try:
                 cursor = connection.cursor()
-                cursor.execute("UPDATE CLIENTS SET NAME = %s, EMAIL = %s, PASSWORD = %s WHERE CPF = %s;",
-                               (client.name, client.email, client.password, cpf))
+
+                update_str = ''
+                values = []
+                for key, value in client.dict().items():
+                    if value is None or value == '':
+                        continue
+                    update_str += f"{key} = %s,"
+                    
+                    if key == 'password':
+                        values.append(ClientService.create_hash_password(value))
+                    else:
+                        values.append(value)
+
+                cursor.execute(f"UPDATE Client SET {update_str[:-1]} WHERE cpf = \'{cpf}\';", tuple(values))
                 connection.commit()
                 cursor.close()
                 connection.close()
@@ -150,7 +164,7 @@ class ClientService:
         connection = connect_to_db()
         if connection:
             cursor = connection.cursor()
-            cursor.execute("SELECT * FROM CLIENTS WHERE cpf = %s;", (cpf,))
+            cursor.execute("SELECT * FROM Client WHERE cpf = %s;", (cpf,))
             data = cursor.fetchone()
             cursor.close()
             connection.close()
@@ -166,7 +180,7 @@ class ClientService:
         connection = connect_to_db()
         if connection:
             cursor = connection.cursor()
-            cursor.execute("SELECT * FROM CLIENTS WHERE email = %s;", (email,))
+            cursor.execute("SELECT * FROM Client WHERE email = %s;", (email,))
             data = cursor.fetchone()
             cursor.close()
             connection.close()
@@ -176,6 +190,113 @@ class ClientService:
                 return None
         else:
             raise Exception("Falha na conexão ao PostgreSQL")
+        
+    @staticmethod
+    def associate(client_id: str, plan_id: str):
+        connection = connect_to_db()
+        if connection:
+            cursor = connection.cursor()
+
+            end_date = datetime.now() + relativedelta(months= 1)
+
+            cursor.execute(
+                'INSERT INTO Associate (fk_Client_id, fk_Plan_id ,end_date) VALUES (%s, %s, %s)',
+                (client_id, plan_id, end_date.strftime('%Y-%m-%d'))
+            )
+
+            connection.commit()
+            cursor.close()
+            connection.close()
+        else:
+            raise Exception("Falha na conexão ao PostgreSQL")
+        
+    @staticmethod
+    def follow_club(club_id: str, client_id: str):
+        connection = connect_to_db()
+        if connection:
+            cursor = connection.cursor()
+            cursor.execute(
+                'INSERT INTO Follow (fk_Client_id, fk_Club_id) VALUES (%s, %s)',
+                (client_id, club_id)
+            )
+            connection.commit()
+            cursor.close()
+            connection.close()
+        else:
+            raise Exception('Falha na conexão ao PostgreSQL')
+        
+    @staticmethod
+    def unfollow_club(club_id: str, client_id:str):
+        connection = connect_to_db()
+        if connection:
+            cursor = connection.cursor()
+            cursor.execute(
+                'DELETE FROM Follow WHERE fk_Client_id = %s AND fk_Club_id = %s',
+                (client_id, club_id)
+            )
+            connection.commit()
+            cursor.close()
+            connection.close()
+        else:
+            raise Exception('Falha na conexão ao PostgreSQL')
+    
+    @staticmethod
+    def get_current_associate(client_id: str):
+        connection = connect_to_db()
+        if connection:
+            cursor = connection.cursor()
+            date = datetime.now()
+            cursor.execute(
+                'SELECT p.*, a.end_date FROM Plan p INNER JOIN Associate a ON a.fk_Plan_id = p.id WHERE a.fk_Client_id = %s AND a.end_date > %s',
+                (client_id, date.strftime('%Y-%m-%d'))
+            )
+            data = cursor.fetchall()
+            ret = []
+
+            if data:
+                for plan in data:
+                    ret.append(
+                        {
+                            'plan_id': plan[0],
+                            'price': plan[1],
+                            'discount': plan[2],
+                            'priority': plan[3],
+                            'name': plan[5],
+                            'description': plan[6],
+                            'image': plan[7],
+                            'end_date': plan[8].strftime('%Y-%m-%d')
+                        }
+                    )
+            return ret
+        
+    @staticmethod
+    def get_all_associate(client_id: str):
+        connection = connect_to_db()
+        if connection:
+            cursor = connection.cursor()
+            date = datetime.now()
+            cursor.execute(
+                'SELECT p.*, a.end_date FROM Plan p INNER JOIN Associate a ON a.fk_Plan_id = p.id WHERE a.fk_Client_id = %s',
+                (client_id)
+            )
+            data = cursor.fetchall()
+            ret = []
+
+            if data:
+                for plan in data:
+                    ret.append(
+                        {
+                            'plan_id': plan[0],
+                            'price': plan[1],
+                            'discount': plan[2],
+                            'priority': plan[3],
+                            'name': plan[5],
+                            'description': plan[6],
+                            'image': plan[7],
+                            'end_date': plan[8].strftime('%Y-%m-%d')
+                        }
+                    )
+            return ret
 
     def create_hash_password(password: str) -> str:
         salt = bcrypt.gensalt()

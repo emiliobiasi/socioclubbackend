@@ -1,14 +1,23 @@
 from typing import Optional
 from pydantic import BaseModel, validator
 import re
+from typing import ClassVar
 
 #Fazer validação dos atributos
 
 class Client(BaseModel):
+    id: Optional[int] = None
     cpf: Optional[str] = None
     name: str
     email: str
     password: str
+
+    #String com nome dos atributos
+    dictId: ClassVar[str] = 'id'
+    dictCpf: ClassVar[str] = 'cpf'
+    dictName: ClassVar[str] = 'name'
+    dictEmail: ClassVar[str] = 'email'
+    dictPassword: ClassVar[str] = 'password'
 
 
     # @validator('email')

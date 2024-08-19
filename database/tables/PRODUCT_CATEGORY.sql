@@ -1,0 +1,1 @@
+CREATE TABLE ProductCategory (id SERIAL PRIMARY KEY , name VARCHAR);

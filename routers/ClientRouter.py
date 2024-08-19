@@ -45,7 +45,7 @@ async def update_client(cpf: str, client: Client):
         raise HTTPException(status_code=500, detail=f"Erro ao atualizar cliente: {str(e)}")
 
 
-@router.get("/findById/{id}")
+@router.get("/findClientById/{id}")
 async def find_client_by_id(id: int):
     try:
         client = ClientService.find_by_id(id)
@@ -57,7 +57,7 @@ async def find_client_by_id(id: int):
         raise HTTPException(status_code=500, detail=f"Erro ao buscar cliente: {str(e)}")
 
 
-@router.get("/findByCpf/{cpf}")
+@router.get("/findClientByCpf/{cpf}")
 async def find_client_by_cpf(cpf: str):
     try:
         client = ClientService.find_client_by_cpf(cpf)
@@ -74,8 +74,56 @@ async def login(request: Request):
     
     access_data = ClientService.login(email=data["email"], password=data["password"])
     
-    return JSONResponse(
+    return JSONResponse( 
         content=access_data,
         status_code=status.HTTP_200_OK
     )
 
+@router.post('/associate')
+async def associate(request: Request):
+    try:
+        data = await request.json()
+
+        ClientService.associate(client_id=data['client_id'], plan_id=data['plan_id'])
+        return JSONResponse(status_code=200, content={'message': 'Sucesso ao associar plano com cliente'})
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erro ao vincular cliente com plano: {str(e)}")
+    
+@router.post('/followClub')
+async def follow_club(request: Request):
+    try:
+        data = await request.json()
+
+        ClientService.follow_club(club_id=data['club_id'], client_id=data['client_id'])
+        return JSONResponse(status_code=200, content={'message': 'Sucesso ao seguir clube'})
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erro ao seguir clube: {str(e)}")
+    
+@router.delete('/unfollowClub')
+async def unfollow_club(request: Request):
+    try:
+        data = await request.json()
+        ClientService.unfollow_club(club_id=data['club_id'], client_id=data['client_id'])
+
+        return JSONResponse(status_code=200, content={'message': 'Sucesso ao deixar de seguir clube'})
+    
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f'Erro ao deixar de seguir: {str(e)}')
+    
+@router.get('/getCurrentAssociate/{client_id}')
+async def get_current_associate(client_id: str):
+    try:
+        dict = ClientService.get_current_associate(client_id=client_id)
+
+        return JSONResponse(status_code=200, content={'message': dict})
+    except Exception as e:
+        return JSONResponse(status_code=500, content={'message': f'Erro ao retornar planos atuais: {str(e)}'})
+
+@router.get('/getAllAssociate/{client_id}')
+async def get_current_associate(client_id: str):
+    try:
+        dict = ClientService.get_all_associate(client_id=client_id)
+
+        return JSONResponse(status_code=200, content={'message': dict})
+    except Exception as e:
+        return JSONResponse(status_code=500, content={'message': f'Erro ao retornar todos os planos: {str(e)}'})

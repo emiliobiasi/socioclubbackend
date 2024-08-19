@@ -1,0 +1,11 @@
+CREATE TABLE Associate (
+  fk_Club_id INTEGER,
+  fk_Client_id INTEGER,
+  fk_Plan_id INTEGER,
+  id SERIAL PRIMARY KEY,
+  end_date TIMESTAMP
+);
+
+ALTER TABLE Associate ADD CONSTRAINT FK_Associate_1 FOREIGN KEY (fk_Club_id) REFERENCES Club (id) ON DELETE NO ACTION;
+ALTER TABLE Associate ADD CONSTRAINT FK_Associate_2 FOREIGN KEY (fk_Client_id) REFERENCES Client (id) ON DELETE NO ACTION;
+ALTER TABLE Associate ADD CONSTRAINT FK_Associate_3 FOREIGN KEY (fk_Plan_id) REFERENCES Plan (id) ON DELETE RESTRICT;
