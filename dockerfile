@@ -7,4 +7,3 @@ ENV POSTGRES_DB=socioclub
 EXPOSE 30000
 
 COPY ./init.sql /docker-entrypoint-initdb.d/
-
