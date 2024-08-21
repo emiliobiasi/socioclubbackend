@@ -37,3 +37,11 @@ async def get_following_club(client_id: str):
         return JSONResponse(content={'clubs': [club.dict() for club in clubs]}, status_code=200)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Erro ao retornar clubes: {str(e)}")
+
+@router.post('/createClub')
+async def create_club(club: Club):
+    try:
+        ClubService.create_club(club=club)
+        return JSONResponse(content={'success': 'Clube criado',}, status_code=200)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f'Erro ao criar clube: {e}')

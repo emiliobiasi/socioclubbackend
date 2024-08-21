@@ -189,6 +189,10 @@ class ClubService:
                     club.club_category,
                 )
             )
+
+            connection.commit()
+            cursor.close()
+            connection.close()
     
     def create_hash_password(password: str) -> str:
         salt = bcrypt.gensalt()

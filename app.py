@@ -1,13 +1,9 @@
-from fastapi import FastAPI, HTTPException, status
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
-from jose import JWTError
 from routers import ClientRouter, AuthRouter, ClubRouter, EventRouter, NewsRouter, ClubCategoryRouter, ProductRouter, PlanRouter, TicketRouter
-from fastapi import Request
 
 import sys, os
 from dotenv import load_dotenv
-from jose import jwt
 
 full_path = os.path.abspath(os.path.join("./",'.env'))
 path_env_file = full_path if os.path.isfile(full_path) else os.path.abspath(os.path.join(os.path.dirname(sys.executable), '.env'))

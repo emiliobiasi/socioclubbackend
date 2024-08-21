@@ -1,8 +1,9 @@
 from pydantic import BaseModel
 from typing import ClassVar
+from typing import Optional
 
 class Club(BaseModel):
-    id: int
+    id: Optional[int] = None
     name: str
     email: str
     password: str
