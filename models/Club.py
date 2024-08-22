@@ -8,17 +8,17 @@ class Club(BaseModel):
     email: str
     password: str
     cnpj: str
-    description: str
+    description: Optional[str] = None
     address: str
-    logo: str
-    background: str
-    titles_color: str
-    subtitles_color: str
-    buttons_color: str
-    palette_1: str
-    palette_2: str
-    palette_3: str
-    club_category: int
+    logo: Optional[str] = None
+    background: Optional[str] = None
+    titles_color: Optional[str] = None
+    subtitles_color: Optional[str] = None
+    buttons_color: Optional[str] = None
+    palette_1: Optional[str] = None
+    palette_2: Optional[str] = None
+    palette_3: Optional[str] = None
+    club_category: Optional[int] = None
 
     #String com nome dos atributos
     dictId: ClassVar[str] = 'id'
