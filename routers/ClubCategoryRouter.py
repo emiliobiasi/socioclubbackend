@@ -4,7 +4,7 @@ from fastapi import status
 from fastapi import Request
 from services.ClubCategoryService import ClubCategoryService
 
-from models.Club import Club
+from models.clubs.Club import Club
 
 
 router = APIRouter()

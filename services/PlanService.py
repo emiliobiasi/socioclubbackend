@@ -1,11 +1,13 @@
 from typing import List
-from models.Plan import Plan
+from models.plans.Plan import Plan
 from database.connection.Connection import connect_to_db
 import os
 from dotenv import load_dotenv
 from dotenv import dotenv_values
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
+
+from models.plans.RegisterPlan import RegisterPlan
 
 projeto_raiz = os.getcwd()
 caminho_env = os.path.join(projeto_raiz, '.env')
@@ -53,8 +55,10 @@ class PlanService:
         if connection:
             cursor = connection.cursor()
             cursor.execute('SELECT * FROM Plan WHERE fk_Club_id = %s AND price != 0',(club_id))
+            
             data = cursor.fetchall()
-            cursor.close
+            print(data)
+            cursor.close()
             plan_list = []
             for plan in data:
                 plan_list.append(
@@ -63,13 +67,51 @@ class PlanService:
                         price=plan[1],
                         discount=plan[2],
                         priority=plan[3],
-                        club_id=plan[4],
-                        name=plan[5],
-                        description=plan[6],
-                        image=plan[7]
+                        club_id=plan[7],
+                        name=plan[6],
+                        description=plan[5],
+                        image=plan[4]
                     )
                 )
             return plan_list
         else:
             raise Exception("Falha na conexão ao PostgreSQL")
         
+    @staticmethod
+    def create_plan(plan: RegisterPlan):
+        connection = connect_to_db()
+        if connection:
+            cursor = connection.cursor()
+            cursor.execute(
+                '''
+                    INSERT INTO Plan (
+                        name,
+                        description,
+                        image,
+                        price,
+                        discount,
+                        priority,
+                        fk_Club_id
+                    ) VALUES (
+                        %s,
+                        %s,
+                        %s,
+                        %s,
+                        %s,
+                        %s,
+                        %s
+                    )
+                ''',
+                (
+                    plan.name,
+                    plan.description,
+                    plan.image,
+                    plan.price,
+                    plan.discount,
+                    plan.priority,
+                    plan.club_id
+                )
+            )
+        connection.commit()
+        cursor.close()
+        connection.close()

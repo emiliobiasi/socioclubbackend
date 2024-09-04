@@ -1,11 +1,13 @@
 from typing import List, Optional
-from models.Club import Club
+from models.clubs.Club import Club
 from database.connection.Connection import connect_to_db
 import os
 from dotenv import load_dotenv
 from dotenv import dotenv_values
 import base64
 import bcrypt
+
+from models.clubs.RegisterClub import RegisterClub
 
 projeto_raiz = os.getcwd()
 caminho_env = os.path.join(projeto_raiz, '.env')
@@ -131,7 +133,7 @@ class ClubService:
             raise Exception('Falha na conexão ao PostgreSQL')
 
     @staticmethod
-    def create_club(club: Club):
+    def create_club(club: RegisterClub):
         connection = connect_to_db()
         if connection:
             cursor = connection.cursor()
@@ -140,30 +142,10 @@ class ClubService:
                     INSERT INTO Club (
                         name,
                         password,
-                        description,
                         address,
-                        logo,
                         email,
                         cnpj,
-                        background,
-                        titles_color,
-                        subtitles_color,
-                        buttons_color,
-                        palette_1,
-                        palette_2,
-                        palette_3,
-                        fk_ClubCategory_id
                     ) values (
-                        %s,
-                        %s,
-                        %s,
-                        %s,
-                        %s,
-                        %s,
-                        %s,
-                        %s,
-                        %s,
-                        %s,
                         %s,
                         %s,
                         %s,
@@ -174,19 +156,9 @@ class ClubService:
                 (
                     club.name,
                     ClubService.create_hash_password(club.password),
-                    club.description,
                     club.address,
-                    club.logo,
                     club.email,
                     club.cnpj,
-                    club.background,
-                    club.titles_color,
-                    club.subtitles_color,
-                    club.buttons_color,
-                    club.palette_1,
-                    club.palette_2,
-                    club.palette_3,
-                    club.club_category,
                 )
             )
 

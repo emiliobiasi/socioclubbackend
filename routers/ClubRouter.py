@@ -3,7 +3,7 @@ from starlette.responses import JSONResponse
 from fastapi import status
 from services.ClubService import ClubService
 
-from models.Club import Club
+from models.clubs.Club import Club
 
 
 router = APIRouter()
