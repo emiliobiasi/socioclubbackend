@@ -34,7 +34,6 @@ class ClientService:
         
         client_on_db = ClientService.find_client_by_email(email)
 
-
         if client_on_db is None:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED, 

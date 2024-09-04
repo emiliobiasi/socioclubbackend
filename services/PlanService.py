@@ -5,7 +5,6 @@ import os
 from dotenv import load_dotenv
 from dotenv import dotenv_values
 from datetime import datetime
-from dateutil.relativedelta import relativedelta
 
 from models.plans.RegisterPlan import RegisterPlan
 

@@ -1,13 +1,16 @@
+from datetime import datetime, timedelta
 from typing import List, Optional
+from jose import jwt
+from fastapi import HTTPException, status
 from models.clubs.Club import Club
 from database.connection.Connection import connect_to_db
 import os
 from dotenv import load_dotenv
 from dotenv import dotenv_values
-import base64
 import bcrypt
 
 from models.clubs.RegisterClub import RegisterClub
+from models.clubs.LoginClub import LoginClub
 
 projeto_raiz = os.getcwd()
 caminho_env = os.path.join(projeto_raiz, '.env')
@@ -165,8 +168,76 @@ class ClubService:
             connection.commit()
             cursor.close()
             connection.close()
+
+    @staticmethod
+    def login(club: LoginClub , expires_at=30):
+        
+        club_on_db = ClubService.find_club_by_email(club.email)
+
+        if club_on_db is None:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED, 
+                detail='Email ou senha incorretos',
+            )
+        
+        if not ClubService.verify_password(club.password, club_on_db.password):
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED, 
+                detail='Email ou senha incorretos',
+            )
+
+        exp = datetime.utcnow() + timedelta(minutes=expires_at)
+
+        payload = {
+            'sub': club.email,
+            'exp': exp
+        }
+
+        access_token = jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
+
+        return {
+            'access_token': access_token,
+            'expires_at': exp.strftime("%Y-%m-%d %H:%M:%S"),
+            'club': club_on_db.to_json()
+        }
+    
+    @staticmethod
+    def find_club_by_email(email: str) -> Optional[Club]:
+        connection = connect_to_db()
+        if connection:
+            cursor = connection.cursor()
+            cursor.execute("SELECT * FROM Club WHERE email = %s;", (email,))
+            data = cursor.fetchone()
+            cursor.close()
+            connection.close()
+            if data:
+                return Club(
+                        id = data[0],
+                        name = data[1],
+                        password = data[2],
+                        description = data[3],
+                        address = data[4],
+                        logo = data[5],
+                        email = data[6],
+                        cnpj = data[7],
+                        background = data[8],
+                        titles_color = data[9],
+                        subtitles_color = data[10],
+                        buttons_color = data[11],
+                        palette_1 = data[12],
+                        palette_2 = data[13],
+                        palette_3 = data[14],
+                        club_category= data[15],
+                    )
+            else:
+                return None
+        else:
+            raise Exception("Falha na conexão ao PostgreSQL")
     
     def create_hash_password(password: str) -> str:
         salt = bcrypt.gensalt()
         password = bcrypt.hashpw(password.encode('utf-8'), salt)
         return password.decode('utf-8')
+    
+    def verify_password(password: str, hashed_password: str) -> bool:
+        return bcrypt.checkpw(password.encode('utf-8'), hashed_password.encode('utf-8'))

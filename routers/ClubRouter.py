@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from starlette.responses import JSONResponse
-from fastapi import status
+from models.clubs.LoginClub import LoginClub
 from services.ClubService import ClubService
 
 from models.clubs.Club import Club
@@ -45,3 +45,11 @@ async def create_club(club: Club):
         return JSONResponse(content={'success': 'Clube criado',}, status_code=200)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f'Erro ao criar clube: {e}')
+
+@router.post('/clubLogin')
+async def login(club: LoginClub):
+    try:
+        body = ClubService.login(club=club)
+        return JSONResponse(content=body, status_code=200)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f'Erro ao realizar login: {e}')

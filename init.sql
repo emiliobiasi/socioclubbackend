@@ -149,7 +149,7 @@ fk_ClubCategory_id
 VALUES
 (
 'São Paulo',
-'$2b$12$srdNck6oZEf7XwJNYqFeSOPaXY4CzsDY80N1B.gcWZBOB.EgyY6r2',
+'$2b$12$DNT9bihPowk62.HgIizEFuWypvM38l4uuhy0I/vJHjwU27cOPewbK',
 'Soberano',
 'Rua São Paulo',
 'https://storage.googleapis.com/socioclub/club/sao-paulo/logo.png',
