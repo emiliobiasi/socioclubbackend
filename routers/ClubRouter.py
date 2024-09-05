@@ -1,5 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from starlette.responses import JSONResponse
+from models.clubs.ColorSchemeClub import ColorSchemeClub
 from models.clubs.LoginClub import LoginClub
 from services.ClubService import ClubService
 
@@ -53,3 +54,11 @@ async def login(club: LoginClub):
         return JSONResponse(content=body, status_code=200)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f'Erro ao realizar login: {e}')
+
+@router.put('/updateColorScheme/{club_id}')
+async def update_color_scheme(colors: ColorSchemeClub, club_id: int):
+    try:
+        ClubService.update_color_scheme(colors= colors, club_id= club_id)
+        return JSONResponse(content={'success': 'Cores atualizadas'}, status_code=200)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f'Erro ao atualizar cores: {e}')

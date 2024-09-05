@@ -9,6 +9,7 @@ from dotenv import load_dotenv
 from dotenv import dotenv_values
 import bcrypt
 
+from models.clubs.ColorSchemeClub import ColorSchemeClub
 from models.clubs.RegisterClub import RegisterClub
 from models.clubs.LoginClub import LoginClub
 
@@ -231,6 +232,37 @@ class ClubService:
                     )
             else:
                 return None
+        else:
+            raise Exception("Falha na conexão ao PostgreSQL")
+        
+    @staticmethod
+    def update_color_scheme(colors: ColorSchemeClub, club_id: int):
+        connection = connect_to_db()
+        if connection:
+            cursor = connection.cursor()
+            cursor.execute('''
+                    UPDATE Club
+                    SET titles_color = %s,
+                    subtitles_color = %s,
+                    buttons_color = %s,
+                    palette_1 = %s,
+                    palette_2 = %s,
+                    palette_3 = %s
+                    WHERE id = %s
+                ''', 
+                (
+                    colors.titles_color,
+                    colors.subtitles_color,
+                    colors.buttons_color,
+                    colors.palette_1,
+                    colors.palette_2,
+                    colors.palette_3,
+                    club_id
+                ),
+            )
+            connection.commit()
+            cursor.close()
+            connection.close()
         else:
             raise Exception("Falha na conexão ao PostgreSQL")
     
