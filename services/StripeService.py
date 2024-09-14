@@ -13,13 +13,25 @@ class StripeService:
     def create_account():
         try:
             account = stripe.Account.create(
-                type="custom",
+                controller={
+                    "stripe_dashboard": {
+                    "type": "none",
+                    },
+                    "fees": {
+                    "payer": "application"
+                    },
+                    "losses": {
+                    "payments": "application"
+                    },
+                    "requirement_collection": "application",
+                },
                 capabilities={
                     "card_payments": {"requested": True},
                     "transfers": {"requested": True}
                 },
                 country="BR",
             )
+            
             return account
 
         except Exception as e:
