@@ -52,3 +52,16 @@ class StripeService:
         except Exception as e:
             print('An error occurred when calling the Stripe API to create an account link:', e)
             raise e
+
+    @staticmethod
+    def update_account(account_id: str):
+        try:
+            connected_account = stripe.Account.modify(
+                account_id,
+                business_type="individual",
+            )
+            return connected_account
+
+        except Exception as e:
+            print('An error occurred when calling the Stripe API to update an account:', e)
+            raise e

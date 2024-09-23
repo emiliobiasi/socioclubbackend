@@ -23,3 +23,12 @@ async def create_account_link(account: dict):
         return JSONResponse(content={'url': account_link.url}, status_code=200)
     except Exception as e:
         return JSONResponse(content={"message": f"Erro ao criar o link da conta: {str(e)}"}, status_code=500)
+    
+@router.post('/account/{account_id}')
+async def update_account(account_id: str):
+    try:
+        connected_account = StripeService.update_account(account_id)
+        return JSONResponse(content={'account': connected_account.id}, status_code=200)
+    except Exception as e:
+        print(f'An error occurred when calling the Stripe API to update an account: {e}')
+        return JSONResponse(content={"message": f"Erro ao atualizar a conta: {str(e)}"}, status_code=500)
