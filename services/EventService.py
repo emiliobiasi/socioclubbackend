@@ -3,7 +3,8 @@ from database.connection.Connection import connect_to_db
 import os
 from dotenv import load_dotenv
 from dotenv import dotenv_values
-from models.Event import Event
+from models.events.CreateEvent import CreateEvent
+from models.events.Event import Event
 
 
 projeto_raiz = os.getcwd()
@@ -69,5 +70,34 @@ class EventService:
                     )
                 )
             return event_list
+        else:
+            raise Exception("Falha na conexão ao PostgreSQL")
+        
+    @staticmethod
+    def create_event(new_event: CreateEvent):
+        query = f'''
+                    INSERT INTO Event(event_name, full_price, tickets_away, tickets_home, event_date, image, description, fk_Club_id)
+                    VALUES (
+                        {new_event.eventName}, 
+                        {new_event.fullPrice}, 
+                        {new_event.ticketsAway}, 
+                        {new_event.ticketsHome}, 
+                        {new_event.eventDate}, 
+                        {new_event.image}, 
+                        {new_event.description}, 
+                        {new_event.fkClubId}
+                    ) 
+                '''
+        EventService._execute_query(query)
+        
+    @staticmethod
+    def _execute_query(query:str):
+        connection = connect_to_db()
+        if connection:
+            cursor = connection.cursor()
+            cursor.execute(query)
+            connection.commit()
+            cursor.close()
+            connection.close()
         else:
             raise Exception("Falha na conexão ao PostgreSQL")

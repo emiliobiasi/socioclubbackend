@@ -1,5 +1,6 @@
 from typing import List, Optional
-from models.Product import Product
+from models.products.Product import Product
+from models.products.CreateProduct import CreateProduct
 from database.connection.Connection import connect_to_db
 import os
 from dotenv import load_dotenv
@@ -118,3 +119,31 @@ class ProductService:
             return product_list
         else:
             raise Exception('Falha na conexão ao PostgreSQL')
+        
+    @staticmethod
+    def create_product(new_product: CreateProduct):
+        query = f'''
+            insert into product (name, description, price, image, category_id, club_id)
+            values (
+                {new_product.name},
+                {new_product.description},
+                {new_product.price},
+                {new_product.image},
+                {new_product.category_id},
+                {new_product.club_id},
+            )
+        '''
+
+        ProductService._execute_query(query=query)
+
+    @staticmethod
+    def _execute_query(query:str):
+        connection = connect_to_db()
+        if connection:
+            cursor = connection.cursor()
+            cursor.execute(query)
+            connection.commit()
+            cursor.close()
+            connection.close()
+        else:
+            raise Exception("Falha na conexão ao PostgreSQL")

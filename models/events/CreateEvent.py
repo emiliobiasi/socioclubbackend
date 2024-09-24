@@ -1,10 +1,8 @@
-import json
 from datetime import datetime
 from pydantic import BaseModel
 from typing import ClassVar
 
-class Event(BaseModel):
-    id: int
+class CreateEvent(BaseModel):
     eventName: str
     description: str
     image: str
@@ -14,8 +12,6 @@ class Event(BaseModel):
     ticketsHome: int
     fkClubId: int
 
-    #String com nome dos atributos
-    dictId: ClassVar[str] = 'id'
     dictEventName: ClassVar[str] = 'eventName'
     dictDescription: ClassVar[str] = 'description'
     dictImage: ClassVar[str] = 'image'
@@ -24,10 +20,3 @@ class Event(BaseModel):
     dictTicketsAway: ClassVar[str] = 'ticketsAway'
     dictTicketsHome: ClassVar[str] = 'ticketsHome'
     dictFkClubId: ClassVar[str] = 'fkClubId'
-
-
-    def dict(self, *args, **kwargs):
-        d = super().dict(*args, **kwargs)
-        d['eventDate'] = d['eventDate'].strftime("%Y-%m-%d %H:%M:%S")
-
-        return d

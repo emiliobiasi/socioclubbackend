@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 from starlette.responses import JSONResponse
 from services.ProductService import ProductService
+from models.products.CreateProduct import CreateProduct
 from fastapi import Request
 
 router = APIRouter()
@@ -43,3 +44,12 @@ async def get_bought_products_by_client_id(client_id: str):
         return JSONResponse(content={'products': [product.dict() for product in products]}, status_code=200)
     except Exception as e:
         return JSONResponse(content={'message': f'Erro ao retornar produtos: {str(e)}'}, status_code=500)
+    
+@router.post('/createProduct')
+async def create_product(new_product: CreateProduct):
+    try:
+        ProductService.create_product(new_product=new_product)
+
+        return JSONResponse(content={'message': 'Produto criado com sucesso!'}, status_code=200)
+    except Exception as e:
+        return JSONResponse(content={'message': f'Erro ao criar produto: {str(e)}'}, status_code=500)

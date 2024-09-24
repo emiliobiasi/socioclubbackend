@@ -148,7 +148,7 @@ class ClubService:
                         password,
                         address,
                         email,
-                        cnpj,
+                        cnpj
                     ) values (
                         %s,
                         %s,

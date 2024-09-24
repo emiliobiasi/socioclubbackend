@@ -3,7 +3,7 @@ from dotenv import load_dotenv, dotenv_values
 from datetime import datetime
 from database.connection.Connection import connect_to_db
 import random, string
-from models.Event import Event
+from models.events.Event import Event
 
 projeto_raiz = os.getcwd()
 caminho_env = os.path.join(projeto_raiz, '.env')

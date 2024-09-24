@@ -6,7 +6,7 @@ CREATE TABLE Club (
     address VARCHAR,
     logo VARCHAR,
     email VARCHAR,
-    cnpj VARCHAR,
+    cnpj VARCHAR UNIQUE,
     background VARCHAR,
     titles_color VARCHAR,
     subtitles_color VARCHAR,
@@ -15,7 +15,7 @@ CREATE TABLE Club (
     palette_2 VARCHAR,
     palette_3 VARCHAR,
     fk_ClubCategory_id INTEGER,
-    stripe_id VARCHAR
+    stripe_id VARCHAR UNIQUE
 );
 CREATE TABLE ClubCategory (id SERIAL PRIMARY KEY, name VARCHAR);
 CREATE TABLE News (
