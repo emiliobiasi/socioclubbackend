@@ -62,3 +62,15 @@ async def update_color_scheme(colors: ColorSchemeClub, club_id: int):
         return JSONResponse(content={'success': 'Cores atualizadas'}, status_code=200)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f'Erro ao atualizar cores: {e}')
+    
+@router.put('/updateStripeId/{club_id}')
+async def update_stripe_id(club_id: int, stripe_id: str):
+    try:
+        updated_club = ClubService.update_stripe_id(stripe_id=stripe_id, club_id=club_id)
+        if updated_club:
+            return JSONResponse(content={'success': 'Stripe ID atualizado', 'club': updated_club}, status_code=200)
+        else:
+            raise HTTPException(status_code=404, detail='Clube não encontrado')
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f'Erro ao atualizar Stripe ID: {e}')
+

@@ -273,3 +273,27 @@ class ClubService:
     
     def verify_password(password: str, hashed_password: str) -> bool:
         return bcrypt.checkpw(password.encode('utf-8'), hashed_password.encode('utf-8'))
+    
+    @staticmethod
+    def update_stripe_id(stripe_id: str, club_id: int):
+        connection = connect_to_db()
+        if connection:
+            cursor = connection.cursor()
+            cursor.execute('''
+                    UPDATE Club
+                    SET stripe_id = %s
+                    WHERE id = %s
+                ''', 
+                (
+                    stripe_id,
+                    club_id
+                ),
+            )
+            connection.commit()
+            cursor.close()
+            connection.close()
+
+            return ClubService.find_by_id(club_id)
+        else:
+            raise Exception("Falha na conexão ao PostgreSQL")
+

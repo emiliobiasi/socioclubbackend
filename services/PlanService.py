@@ -26,12 +26,13 @@ class PlanService:
 
         if connection:
             cursor = connection.cursor()
-            cursor.execute('SELECT * FROM Plan')
+            cursor.execute('SELECT id, price, discount, priority, fk_Club_id, name, description, image FROM Plan')
             data = cursor.fetchall()
             cursor.close
             plan_list = []
             
             for plan in data:
+                print(plan)
                 plan_list.append(
                     Plan(
                         id = plan[0],

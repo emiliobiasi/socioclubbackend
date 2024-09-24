@@ -14,7 +14,8 @@ CREATE TABLE Club (
     palette_1 VARCHAR,
     palette_2 VARCHAR,
     palette_3 VARCHAR,
-    fk_ClubCategory_id INTEGER
+    fk_ClubCategory_id INTEGER,
+    stripe_id VARCHAR
 );
 CREATE TABLE ClubCategory (id SERIAL PRIMARY KEY, name VARCHAR);
 CREATE TABLE News (
