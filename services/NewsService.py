@@ -23,7 +23,7 @@ class NewsService:
 
         if connection:
             cursor = connection.cursor()
-            cursor.execute('SELECT * FROM News')
+            cursor.execute('SELECT id, text, image, author, title, publish_date, fk_Club_id FROM News')
             data = cursor.fetchall()
             cursor.close
             news_list = []
@@ -34,9 +34,9 @@ class NewsService:
                         text=news[1],
                         image=news[2],
                         author=news[3],
-                        club_id=news[4],
+                        title=news[4],
                         publish_date=news[5],
-                        title=news[6]
+                        club_id=news[6],                       
                     )
                 )
             return news_list
@@ -50,7 +50,7 @@ class NewsService:
         if connection:
             
             cursor = connection.cursor()
-            cursor.execute('SELECT * FROM News WHERE fk_Club_id = %s',(club_id))
+            cursor.execute('SELECT id, text, image, author, title, publish_date, fk_Club_id FROM News WHERE fk_Club_id = %s',(club_id))
             data = cursor.fetchall()
             cursor.close
             news_list = []
@@ -61,9 +61,9 @@ class NewsService:
                         text=news[1],
                         image=news[2],
                         author=news[3],
-                        club_id=news[4],
+                        title=news[4],
                         publish_date=news[5],
-                        title=news[6]
+                        club_id=news[6], 
                     )
                 )
             return news_list

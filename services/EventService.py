@@ -23,7 +23,7 @@ class EventService:
         connection = connect_to_db()
         if connection:
             cursor = connection.cursor()
-            cursor.execute("SELECT * FROM Event;")
+            cursor.execute("SELECT id, event_name, description, image, full_price, event_date, tickets_away, tickets_home, fk_Club_id FROM Event;")
             data = cursor.fetchall()
             cursor.close()
             connection.close()
@@ -51,7 +51,7 @@ class EventService:
         connection = connect_to_db()
         if connection:
             cursor = connection.cursor()
-            cursor.execute(f"SELECT * FROM Event WHERE fk_Club_id = {club_id};")
+            cursor.execute(f"SELECT id, event_name, description, image, full_price, event_date, tickets_away, tickets_home, fk_Club_id FROM Event WHERE fk_Club_id = {club_id};")
             data = cursor.fetchall()
             cursor.close
             event_list = []

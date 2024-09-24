@@ -24,12 +24,14 @@ class ProductService:
 
         if connection:
             cursor = connection.cursor()
-            cursor.execute('SELECT * FROM Product')
+            cursor.execute('SELECT id, name, description, price, fk_Club_id, fk_ProductCategory_id, image FROM Product')
             data = cursor.fetchall()
             cursor.close
             product_list = []
             
             for product in data:
+                print('oi')
+                print(product[6])
                 product_list.append(
                     Product(
                         id = product[0],
@@ -52,12 +54,14 @@ class ProductService:
         if connection:
             
             cursor = connection.cursor()
-            cursor.execute('SELECT * FROM Product WHERE fk_Club_id = %s',(club_id))
+            cursor.execute('SELECT id, name, description, price, fk_Club_id, fk_ProductCategory_id, image FROM Product WHERE fk_Club_id = %s',(club_id))
             data = cursor.fetchall()
             cursor.close()
             product_list = []
             
             for product in data:
+                print('oi')
+                print(product[6])
                 product_list.append(
                     Product(
                         id = product[0],
@@ -122,17 +126,19 @@ class ProductService:
         
     @staticmethod
     def create_product(new_product: CreateProduct):
+        
         query = f'''
-            insert into product (name, description, price, image, category_id, club_id)
+            insert into product (name, description, price, image, fk_Club_id, fk_ProductCategory_id)
             values (
-                {new_product.name},
-                {new_product.description},
+                "{new_product.name}",
+                "{new_product.description}",
                 {new_product.price},
-                {new_product.image},
+                "{new_product.image}",
                 {new_product.category_id},
-                {new_product.club_id},
+                {new_product.club_id}
             )
         '''
+        print(query)
 
         ProductService._execute_query(query=query)
 
@@ -140,10 +146,13 @@ class ProductService:
     def _execute_query(query:str):
         connection = connect_to_db()
         if connection:
-            cursor = connection.cursor()
-            cursor.execute(query)
-            connection.commit()
-            cursor.close()
-            connection.close()
+            try:
+                cursor = connection.cursor()
+                cursor.execute(query)
+                connection.commit()
+                cursor.close()
+                connection.close()
+            except Exception as e:
+                print(e)
         else:
             raise Exception("Falha na conexão ao PostgreSQL")
