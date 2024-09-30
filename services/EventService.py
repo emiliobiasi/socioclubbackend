@@ -23,7 +23,7 @@ class EventService:
         connection = connect_to_db()
         if connection:
             cursor = connection.cursor()
-            cursor.execute("SELECT * FROM Event;")
+            cursor.execute("SELECT id, event_name, description, image, full_price, event_date, tickets_away, tickets_home, fk_Club_id FROM Event;")
             data = cursor.fetchall()
             cursor.close()
             connection.close()
@@ -51,7 +51,7 @@ class EventService:
         connection = connect_to_db()
         if connection:
             cursor = connection.cursor()
-            cursor.execute(f"SELECT * FROM Event WHERE fk_Club_id = {club_id};")
+            cursor.execute(f"SELECT id, event_name, description, image, full_price, event_date, tickets_away, tickets_home, fk_Club_id FROM Event WHERE fk_Club_id = {club_id};")
             data = cursor.fetchall()
             cursor.close
             event_list = []
@@ -78,17 +78,19 @@ class EventService:
         query = f'''
                     INSERT INTO Event(event_name, full_price, tickets_away, tickets_home, event_date, image, description, fk_Club_id)
                     VALUES (
-                        {new_event.eventName}, 
+                        '{new_event.eventName}', 
                         {new_event.fullPrice}, 
                         {new_event.ticketsAway}, 
                         {new_event.ticketsHome}, 
-                        {new_event.eventDate}, 
-                        {new_event.image}, 
-                        {new_event.description}, 
+                        '{new_event.eventDate}', 
+                        '{new_event.image}', 
+                        '{new_event.description}',
                         {new_event.fkClubId}
                     ) 
                 '''
+        print(query)
         EventService._execute_query(query)
+
         
     @staticmethod
     def _execute_query(query:str):

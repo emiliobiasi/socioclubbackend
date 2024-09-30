@@ -191,15 +191,18 @@ INSERT INTO Product (
         description,
         price,
         fk_Club_id,
-        fk_ProductCategory_id
+        fk_ProductCategory_id,
+        image
     )
 VALUES (
         'Camisa Oficial - Jogo',
         'Camisa Oficial de jogo do São Paulo',
         300,
         1,
-        1
+        1,
+        'qwerqwerqwer'
     );
+
 INSERT INTO Event (
         event_name,
         description,
