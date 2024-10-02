@@ -90,6 +90,13 @@ class EventService:
                 '''
         print(query)
         EventService._execute_query(query)
+    
+    @staticmethod
+    def delete_event(event_id: str):
+        delete_query = "delete from event where id = %s"
+        delete_tuple = (event_id)
+
+        EventService._execute_query(delete_query, delete_tuple)
 
         
     @staticmethod

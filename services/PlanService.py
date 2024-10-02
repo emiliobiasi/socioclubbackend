@@ -115,3 +115,25 @@ class PlanService:
         connection.commit()
         cursor.close()
         connection.close()
+    
+    @staticmethod
+    def delete_plan(plan_id: str):
+        delete_query = "delete from plan where id = %s"
+        delete_tuple = (plan_id)
+
+        PlanService._execute_query(delete_query, delete_tuple)
+    
+    @staticmethod
+    def _execute_query(query:str):
+        connection = connect_to_db()
+        if connection:
+            try:
+                cursor = connection.cursor()
+                cursor.execute(query)
+                connection.commit()
+                cursor.close()
+                connection.close()
+            except Exception as e:
+                print(e)
+        else:
+            raise Exception("Falha na conexão ao PostgreSQL")

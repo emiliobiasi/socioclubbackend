@@ -127,20 +127,46 @@ class ProductService:
     @staticmethod
     def create_product(new_product: CreateProduct):
         
-        query = f'''
+        create_query = '''
             insert into product (name, description, price, image, fk_Club_id, fk_ProductCategory_id)
             values (
-                "{new_product.name}",
-                "{new_product.description}",
-                {new_product.price},
-                "{new_product.image}",
-                {new_product.category_id},
-                {new_product.club_id}
+                %s,
+                %s,
+                %s,
+                %s,
+                %s,
+                %s
             )
-        '''
-        print(query)
+            returning id, name, description, price, image, fk_Club_id, fk_ProductCategory_id;
+        ''' 
 
-        ProductService._execute_query(query=query)
+        create_tuple = (
+            new_product.name,
+            new_product.description,
+            new_product.price,
+            new_product.image,
+            new_product.category_id,
+            new_product.club_id
+        )
+
+        data = ProductService._execute_select_one_query(query=create_query, t=create_tuple)
+
+        return Product(
+            id=data[0],
+            name=data[1],
+            description=data[3],
+            price=data[4],
+            image=data[5],
+            club_id=data[6],
+            category_id=data[7]
+        )
+    
+    @staticmethod
+    def delete_product(product_id: str):
+        delete_query = "delete from product where id = %s"
+        delete_tuple = (product_id)
+
+        ProductService._execute_query(delete_query, delete_tuple)
 
     @staticmethod
     def _execute_query(query:str):
@@ -154,5 +180,20 @@ class ProductService:
                 connection.close()
             except Exception as e:
                 print(e)
+        else:
+            raise Exception("Falha na conexão ao PostgreSQL")
+    
+    @staticmethod
+    def _execute_select_one_query(query: str, t: tuple):
+        connection = connect_to_db()
+        if connection:
+            cursor = connection.cursor()
+            cursor.execute(query, t)
+            data = cursor.fetchone()
+            connection.commit()
+            cursor.close()
+            connection.close()
+
+            return data
         else:
             raise Exception("Falha na conexão ao PostgreSQL")
