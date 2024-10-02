@@ -29,3 +29,12 @@ async def create_plan(plan: RegisterPlan):
         return JSONResponse(content={'message': 'Plano criado com sucesso'}, status_code=200)
     except Exception as e:
         return JSONResponse(content={'message': f'Erro ao criar plano: {e}'}, status_code=500)
+    
+@router.delete('/deletePlan/{plan_id}')
+async def delete_plan(plan_id: str):
+    try:
+        data = PlanService.delete_plan(plan_id=plan_id)
+        return JSONResponse(content={'message': 'plano deletado com sucesso'}, status_code=200)
+
+    except Exception as e:
+        return JSONResponse(content={"message": f"Erro ao deletar plano: {str(e)}"}, status_code=500)

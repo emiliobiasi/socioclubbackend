@@ -145,8 +145,8 @@ class ProductService:
             new_product.description,
             new_product.price,
             new_product.image,
-            new_product.category_id,
-            new_product.club_id
+            new_product.club_id,
+            new_product.category_id
         )
 
         data = ProductService._execute_select_one_query(query=create_query, t=create_tuple)
@@ -154,11 +154,11 @@ class ProductService:
         return Product(
             id=data[0],
             name=data[1],
-            description=data[3],
-            price=data[4],
-            image=data[5],
-            club_id=data[6],
-            category_id=data[7]
+            description=data[2],
+            price=data[3],
+            image=data[4],
+            club_id=data[5],
+            category_id=data[6]
         )
     
     @staticmethod

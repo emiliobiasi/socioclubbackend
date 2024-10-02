@@ -32,3 +32,12 @@ async def create_event(new_event: CreateEvent):
     except Exception as e:
         return JSONResponse(content={'message': f'Erro ao obter eventos: {e}'}, status_code=500)
 
+
+@router.delete('/deleteEvent/{event_id}')
+async def delete_event(event_id: str):
+    try:
+        data = EventService.delete_event(event_id=event_id)
+        return JSONResponse(content={'message': 'evento deletado com sucesso'}, status_code=200)
+
+    except Exception as e:
+        return JSONResponse(content={"message": f"Erro ao deletar evento: {str(e)}"}, status_code=500)

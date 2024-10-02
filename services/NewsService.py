@@ -36,9 +36,9 @@ class NewsService:
                         text=news[1],
                         image=news[2],
                         author=news[3],
-                        title=news[4],
+                        club_id=news[4],                       
                         publish_date=news[5],
-                        club_id=news[6],                       
+                        title=news[6],
                     )
                 )
             return news_list
@@ -63,9 +63,9 @@ class NewsService:
                         text=news[1],
                         image=news[2],
                         author=news[3],
-                        title=news[4],
+                        club_id=news[4],                       
                         publish_date=news[5],
-                        club_id=news[6], 
+                        title=news[6],
                     )
                 )
             return news_list

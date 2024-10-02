@@ -53,3 +53,13 @@ async def create_product(new_product: CreateProduct):
         return JSONResponse(content={'message': 'Produto criado com sucesso!'}, status_code=200)
     except Exception as e:
         return JSONResponse(content={'message': f'Erro ao criar produto: {str(e)}'}, status_code=500)
+    
+
+@router.delete('/deleteProduct/{product_id}')
+async def delete_product(product_id: str):
+    try:
+        data = ProductService.delete_product(product_id=product_id)
+        return JSONResponse(content={'message': 'produto deletado com sucesso'}, status_code=200)
+
+    except Exception as e:
+        return JSONResponse(content={"message": f"Erro ao deletar produto: {str(e)}"}, status_code=500)
