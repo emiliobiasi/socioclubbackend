@@ -119,7 +119,7 @@ class PlanService:
     @staticmethod
     def delete_plan(plan_id: str):
         delete_query = "delete from plan where id = %s"
-        delete_tuple = (plan_id)
+        delete_tuple = (plan_id,)
 
         PlanService._execute_query(delete_query, delete_tuple)
     

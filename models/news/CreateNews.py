@@ -17,7 +17,6 @@ class CreateNews(BaseModel):
     dictPublish_date: ClassVar[str] = 'publish_date'
     dictTitle: ClassVar[str] = 'title'
 
-
     def dict(self, *args, **kwargs):
         d = super().dict(*args, **kwargs)
         d['publish_date'] = d['publish_date'].strftime("%Y-%m-%d %H:%M:%S")

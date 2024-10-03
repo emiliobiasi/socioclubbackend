@@ -74,6 +74,7 @@ class NewsService:
     
     @staticmethod
     def create_news(new_news: CreateNews):
+
         create_query = '''
             insert into news (text,image,author,title,publish_date,fk_Club_id)
             values (
@@ -90,20 +91,22 @@ class NewsService:
 
         data = NewsService._execute_select_one_query(query=create_query, t= create_tuple)
 
+        print(data)
+
         return News(
             id=data[0],
-            text=data[1],
-            image=data[2],
-            author=data[3],
+            text=data[2],
+            image=data[3],
+            author=data[4],
             club_id=data[6],
             publish_date=data[5],
-            title=data[4]
+            title=data[1]
         )
     
     @staticmethod
     def delete_new(new_id: str):
         delete_query = "delete from news where id = %s"
-        delete_tuple = (new_id)
+        delete_tuple = (new_id,)
 
         NewsService._execute_query(delete_query, delete_tuple)
         
