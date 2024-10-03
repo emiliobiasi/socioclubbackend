@@ -74,7 +74,7 @@ class NewsService:
     
     @staticmethod
     def create_news(new_news: CreateNews):
-        create_query = f'''
+        create_query = '''
             insert into news (text,image,author,title,publish_date,fk_Club_id)
             values (
                 %s,
