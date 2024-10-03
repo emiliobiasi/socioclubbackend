@@ -75,16 +75,6 @@ class EventService:
         
     @staticmethod
     def create_event(new_event: CreateEvent):
-
-        print(new_event.eventName)
-        print(new_event.fullPrice)
-        print(new_event.ticketsAway)
-        print(new_event.ticketsHome)
-        print(new_event.eventDate)
-        print(new_event.image)
-        print(new_event.description)
-        print(new_event.fkClubId)
-        
         query = '''
                     INSERT INTO Event(event_name, full_price, tickets_away, tickets_home, event_date, image, description, fk_Club_id)
                     VALUES (

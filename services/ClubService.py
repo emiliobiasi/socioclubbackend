@@ -54,7 +54,8 @@ class ClubService:
                         palette_1 = club[12],
                         palette_2 = club[13],
                         palette_3 = club[14],
-                        club_category= club[15]
+                        club_category= club[15],
+                        stripe_id = club[16]
                     )
                 )
             return clubs_list
@@ -66,7 +67,26 @@ class ClubService:
         connection = connect_to_db()
         if connection:
             cursor = connection.cursor()
-            cursor.execute(f"SELECT * FROM Club WHERE id={client_id};")
+            cursor.execute(f'''
+                SELECT id,
+                name,
+                password,
+                description,
+                address,
+                logo,
+                email,
+                cnpj,
+                background,
+                titles_color,
+                subtitles_color,
+                buttons_color,
+                palette_1,
+                palette_2,
+                palette_3,
+                fk_ClubCategory_id,                
+                stripe_id 
+                FROM Club WHERE id={client_id};'''
+            )
             club = cursor.fetchone()
             cursor.close()
             connection.close()
@@ -87,7 +107,8 @@ class ClubService:
                         palette_1 = club[12],
                         palette_2 = club[13],
                         palette_3 = club[14],
-                        club_category= club[15]
+                        club_category = club[15],
+                        stripe_id = club[16]
                     )
             else:
                 return None
@@ -127,7 +148,8 @@ class ClubService:
                         palette_1 = club[12],
                         palette_2 = club[13],
                         palette_3 = club[14],
-                        club_category= club[15]
+                        club_category= club[15],
+                        stripe_id = club[16]
                     )
                 )
             cursor.close()
@@ -229,6 +251,7 @@ class ClubService:
                         palette_2 = data[13],
                         palette_3 = data[14],
                         club_category= data[15],
+                        stripe_id = data[16]
                     )
             else:
                 return None

@@ -1,5 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from starlette.responses import JSONResponse
+from models.clubs.RegisterStripeClub import RegisterStripeClub
 from models.clubs.ColorSchemeClub import ColorSchemeClub
 from models.clubs.LoginClub import LoginClub
 from services.ClubService import ClubService
@@ -23,7 +24,7 @@ async def find_client_by_id(id: int):
     try:
         club = ClubService.find_by_id(id)
         if club:
-            return JSONResponse(content={'club': club.dict()}, status_code=200)
+            return JSONResponse(content={'club': club.to_json()}, status_code=200)
         else:
             return JSONResponse(content={'message': 'Clube não encontrado'}, status_code=404)
     except Exception as e:
@@ -63,12 +64,12 @@ async def update_color_scheme(colors: ColorSchemeClub, club_id: int):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f'Erro ao atualizar cores: {e}')
     
-@router.put('/updateStripeId/{club_id}')
-async def update_stripe_id(club_id: int, stripe_id: str):
+@router.put('/updateStripeId')
+async def update_stripe_id(teste: RegisterStripeClub):
     try:
-        updated_club = ClubService.update_stripe_id(stripe_id=stripe_id, club_id=club_id)
+        updated_club = ClubService.update_stripe_id(stripe_id=teste.stripe_id, club_id=teste.club_id)
         if updated_club:
-            return JSONResponse(content={'success': 'Stripe ID atualizado', 'club': updated_club}, status_code=200)
+            return JSONResponse(content={'success': 'Stripe ID atualizado', 'club': updated_club.to_json()}, status_code=200)
         else:
             raise HTTPException(status_code=404, detail='Clube não encontrado')
     except Exception as e:

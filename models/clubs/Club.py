@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import ClassVar
+from typing import ClassVar, Optional
 
 #remover senha dessa classe
 
@@ -20,6 +20,7 @@ class Club(BaseModel):
     palette_2: str = None
     palette_3: str = None
     club_category: int = None
+    stripe_id: Optional[str] = None
 
     #String com nome dos atributos
     dictId: ClassVar[str] = 'id'
@@ -38,6 +39,7 @@ class Club(BaseModel):
     dictPalette_2: ClassVar[str] = 'palette_2'
     dictPalette_3: ClassVar[str] = 'palette_3'
     dictClub_category: ClassVar[str] = 'club_category'
+    dictStripe_id: ClassVar[str] = 'stripe_id'
 
     def to_json(self):
         return {
@@ -57,4 +59,5 @@ class Club(BaseModel):
             f'{self.dictPalette_2}':self.palette_2,
             f'{self.dictPalette_3}':self.palette_3,
             f'{self.dictClub_category}':self.club_category,
+            f'{self.dictStripe_id}':self.stripe_id
         }
