@@ -32,3 +32,27 @@ async def update_account(account_id: str):
     except Exception as e:
         print(f'An error occurred when calling the Stripe API to update an account: {e}')
         return JSONResponse(content={"message": f"Erro ao atualizar a conta: {str(e)}"}, status_code=500)
+
+@router.post('/create_product')
+async def create_product(product: dict):
+    try:
+        name = product.get('name')
+        price = product.get('price')
+        currency = product.get('currency', 'usd')
+        interval = product.get('interval', None)
+
+        if not name:
+            raise HTTPException(status_code=400, detail="Product name is required")
+        if price is None:
+            raise HTTPException(status_code=400, detail="Product price is required")
+
+        created_product = StripeService.create_product_with_price(
+            name=name,
+            price=price,
+            currency=currency,
+            interval=interval
+        )
+
+        return JSONResponse(content={'price_id': created_product['price'].id}, status_code=200)
+    except Exception as e:
+        return JSONResponse(content={"message": f"Erro ao criar o produto: {str(e)}"}, status_code=500)

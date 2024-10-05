@@ -144,7 +144,8 @@ VALUES (
         '#9e0100',
         '#fc2221',
         '#460101',
-        1
+        1,
+        ''
     );
 INSERT INTO Client (cpf, name, email, password)
 VALUES (
