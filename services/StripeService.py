@@ -44,8 +44,8 @@ class StripeService:
         try:
             account_link = stripe.AccountLink.create(
                 account=connected_account_id,
-                return_url=f"http://localhost:8000/stripe/return/{connected_account_id}",
-                refresh_url=f"http://localhost:8000/stripe/refresh/{connected_account_id}",
+                return_url=f"http://localhost:5173/financeiro/{connected_account_id}",
+                refresh_url=f"http://localhost:5173/financeiro/{connected_account_id}",
                 type="account_onboarding",
             )
             return account_link
@@ -65,6 +65,22 @@ class StripeService:
 
         except Exception as e:
             print('An error occurred when calling the Stripe API to update an account:', e)
+            raise e
+        
+    @staticmethod
+    def create_product_with_price(name: str, price: int, currency: str = "usd", interval: str = None):
+        try:
+            
+            price_obj = stripe.Price.create(
+                currency=currency,
+                unit_amount=price, 
+                product_data={"name": name},
+                recurring={"interval": interval} if interval else None
+            )
+
+            return {"price": price_obj}
+
+        except Exception as e:
             raise e
         
     @staticmethod

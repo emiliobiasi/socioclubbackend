@@ -75,36 +75,45 @@ class EventService:
         
     @staticmethod
     def create_event(new_event: CreateEvent):
-        query = f'''
+        query = '''
                     INSERT INTO Event(event_name, full_price, tickets_away, tickets_home, event_date, image, description, fk_Club_id)
                     VALUES (
-                        '{new_event.eventName}', 
-                        {new_event.fullPrice}, 
-                        {new_event.ticketsAway}, 
-                        {new_event.ticketsHome}, 
-                        '{new_event.eventDate}', 
-                        '{new_event.image}', 
-                        '{new_event.description}',
-                        {new_event.fkClubId}
+                        %s, 
+                        %s, 
+                        %s, 
+                        %s, 
+                        %s, 
+                        %s, 
+                        %s,
+                        %s
                     ) 
                 '''
-        print(query)
-        EventService._execute_query(query)
+        create_tuple = (
+            new_event.eventName,
+            new_event.fullPrice,
+            new_event.ticketsAway,
+            new_event.ticketsHome,
+            new_event.eventDate,
+            new_event.image,
+            new_event.description,
+            new_event.fkClubId
+        )
+        EventService._execute_query(query, create_tuple)
     
     @staticmethod
     def delete_event(event_id: str):
         delete_query = "delete from event where id = %s"
-        delete_tuple = (event_id)
+        delete_tuple = (event_id,)
 
         EventService._execute_query(delete_query, delete_tuple)
 
         
     @staticmethod
-    def _execute_query(query:str):
+    def _execute_query(query:str , t: tuple):
         connection = connect_to_db()
         if connection:
             cursor = connection.cursor()
-            cursor.execute(query)
+            cursor.execute(query, t)
             connection.commit()
             cursor.close()
             connection.close()

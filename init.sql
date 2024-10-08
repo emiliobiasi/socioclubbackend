@@ -131,7 +131,8 @@ INSERT INTO Club (
         palette_1,
         palette_2,
         palette_3,
-        fk_ClubCategory_id
+        fk_ClubCategory_id,
+        stripe_id
     )
 VALUES (
         'São Paulo',
@@ -148,7 +149,8 @@ VALUES (
         '#9e0100',
         '#fc2221',
         '#460101',
-        1
+        1,
+        ''
     );
 INSERT INTO Client (cpf, name, email, password)
 VALUES (
@@ -207,7 +209,6 @@ VALUES (
         1,
         'qwerqwerqwer'
     );
-
 INSERT INTO Event (
         event_name,
         description,
