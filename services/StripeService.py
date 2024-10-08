@@ -78,13 +78,14 @@ class StripeService:
                 recurring={"interval": interval} if interval else None
             )
 
-            return {"price": price_obj}
+            return price_obj
 
         except Exception as e:
+            print(e)
             raise e
         
     @staticmethod
-    def setup_stripe(socioclub_id: int, stripe_id: str, price_id: str):
+    def vinculate(socioclub_id: int, stripe_id: str, price_id: str):
         query = 'insert into stripe(socioclub_id, stripe_id, price_id) values (%s, %s, %s)'
         t = (socioclub_id, stripe_id, price_id)
 
