@@ -1,6 +1,7 @@
 import os
 from dotenv import load_dotenv
 import stripe
+from database.connection.Connection import connect_to_db
 
 load_dotenv()
 
@@ -65,3 +66,25 @@ class StripeService:
         except Exception as e:
             print('An error occurred when calling the Stripe API to update an account:', e)
             raise e
+        
+    @staticmethod
+    def setup_stripe(socioclub_id: int, stripe_id: str, price_id: str):
+        query = 'insert into stripe(socioclub_id, stripe_id, price_id) values (%s, %s, %s)'
+        t = (socioclub_id, stripe_id, price_id)
+
+        StripeService._execute_query(query=query, t=t)
+    
+    @staticmethod
+    def _execute_query(query:str, t: tuple):
+        connection = connect_to_db()
+        if connection:
+            try:
+                cursor = connection.cursor()
+                cursor.execute(query, t)
+                connection.commit()
+                cursor.close()
+                connection.close()
+            except Exception as e:
+                print(e)
+        else:
+            raise Exception("Falha na conexão ao PostgreSQL")

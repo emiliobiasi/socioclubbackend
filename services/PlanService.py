@@ -124,7 +124,7 @@ class PlanService:
         PlanService._execute_query(delete_query, delete_tuple)
     
     @staticmethod
-    def _execute_query(query:str):
+    def _execute_query(query:str, t: tuple):
         connection = connect_to_db()
         if connection:
             try:

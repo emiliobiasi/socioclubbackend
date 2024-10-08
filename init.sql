@@ -76,6 +76,11 @@ CREATE TABLE Buy (
     fk_Product_id INTEGER,
     fk_Ticket_qr_code VARCHAR
 );
+CREATE TABLE Stripe(
+    socioclub_id INTEGER,
+    stripe_id VARCHAR,
+    price_id VARCHAR
+);
 CREATE TABLE Follow (fk_Client_id INTEGER, fk_Club_id INTEGER);
 ALTER TABLE Club
 ADD CONSTRAINT FK_Club_2 FOREIGN KEY (fk_ClubCategory_id) REFERENCES ClubCategory (id) ON DELETE RESTRICT;
