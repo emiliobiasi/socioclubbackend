@@ -1,5 +1,7 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request
 from starlette.responses import JSONResponse
+from models.stripe.create_product_stripe import CreateProductStripe
+from models.stripe.vinculate import Vinculate
 from services.StripeService import StripeService
 
 router = APIRouter()
@@ -34,25 +36,32 @@ async def update_account(account_id: str):
         return JSONResponse(content={"message": f"Erro ao atualizar a conta: {str(e)}"}, status_code=500)
 
 @router.post('/create_product')
-async def create_product(product: dict):
+async def create_product(request: CreateProductStripe):
     try:
-        name = product.get('name')
-        price = product.get('price')
-        currency = product.get('currency', 'usd')
-        interval = product.get('interval', None)
 
-        if not name:
-            raise HTTPException(status_code=400, detail="Product name is required")
-        if price is None:
-            raise HTTPException(status_code=400, detail="Product price is required")
-
+        print(request.name)
+        # Criar o produto com preço no Stripe
         created_product = StripeService.create_product_with_price(
-            name=name,
-            price=price,
-            currency=currency,
-            interval=interval
+            name=request.name,
+            price=request.price,
+            currency=request.currency,
+            interval=None
         )
 
-        return JSONResponse(content={'price_id': created_product['price'].id}, status_code=200)
+        # Retornar tanto o price_id quanto o product_id
+        return JSONResponse(content={
+            'price_id': created_product['id'],
+            'product_id': created_product['product']
+        }, status_code=200)
+
     except Exception as e:
         return JSONResponse(content={"message": f"Erro ao criar o produto: {str(e)}"}, status_code=500)
+
+
+@router.post('/vinculate')
+async def vinculate(temp: dict):
+    try:
+
+        StripeService.vinculate(socioclub_id=temp['socioclub_id'], stripe_id=temp['stripe_id'], price_id=temp['price_id'])
+    except Exception as e:
+        return JSONResponse(content={"message": f"Erro ao vincular: {str(e)}"}, status_code=500)

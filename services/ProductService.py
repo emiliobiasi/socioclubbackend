@@ -30,8 +30,6 @@ class ProductService:
             product_list = []
             
             for product in data:
-                print('oi')
-                print(product[6])
                 product_list.append(
                     Product(
                         id = product[0],
@@ -60,8 +58,6 @@ class ProductService:
             product_list = []
             
             for product in data:
-                print('oi')
-                print(product[6])
                 product_list.append(
                     Product(
                         id = product[0],

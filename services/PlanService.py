@@ -129,7 +129,7 @@ class PlanService:
         if connection:
             try:
                 cursor = connection.cursor()
-                cursor.execute(query)
+                cursor.execute(query, t)
                 connection.commit()
                 cursor.close()
                 connection.close()
