@@ -18,16 +18,28 @@ import os
 from dotenv import load_dotenv
 from jose import jwt, JWTError
 from services.ClientService import ClientService
+from src.modules.images.external.datasource.image_datasource import ImageDatasource
+from src.modules.images.external.repositories.image_repository import ImageRepository
+from src.modules.images.external.routers.image_router import ImageRouter
+import os
 
-full_path = os.path.abspath(os.path.join("./", '.env'))
-path_env_file = full_path if os.path.isfile(full_path) else os.path.abspath(os.path.join(os.path.dirname(sys.executable), '.env'))
+full_path = os.path.abspath(os.path.join("./", ".env"))
+path_env_file = (
+    full_path
+    if os.path.isfile(full_path)
+    else os.path.abspath(os.path.join(os.path.dirname(sys.executable), ".env"))
+)
 
 if load_dotenv(path_env_file):
     SECRET_KEY = os.getenv("SECRET_KEY")
     ALGORITHM = os.getenv("ALGORITHM")
     STRIPE_API_KEY = os.getenv("STRIPE_API_KEY")
+    BUCKET_NAME = os.getenv("BUCKET_NAME")
+
+    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.getenv('GOOGLE_KEY_PATH')
+
 else:
-    raise Exception('Não foi possível achar o arquivo .env: ' + path_env_file)
+    raise Exception("Não foi possível achar o arquivo .env: " + path_env_file)
 
 app = FastAPI()
 
@@ -41,6 +53,17 @@ app.include_router(PlanRouter.router)
 app.include_router(EventRouter.router)
 app.include_router(TicketRouter.router)
 app.include_router(StripeRouter.router, prefix="/stripe", tags=["Stripe"])
+
+# TODO - Estudar injeção de dependencias
+app.include_router(
+    ImageRouter(
+        repo=ImageRepository(
+            datasource=ImageDatasource(
+                bucket_name=BUCKET_NAME,
+            ),
+        )
+    ).router
+)
 
 app.add_middleware(
     CORSMiddleware,
@@ -78,12 +101,12 @@ app.add_middleware(
 #     response = await call_next(request)
 #     return response
 
-def run(host="localhost", port=8000):
-    import uvicorn
-    uvicorn.run(app, host=host, port=port)
 
 if __name__ == "__main__":
-    host = input('Digite o host (Digite 1 para localhost): ')
-    if host == '1':
-        host = 'localhost'
-    run(host=host)
+    import uvicorn
+
+    uvicorn.run(
+        app,
+        host="localhost",
+        port="8000",
+    )
