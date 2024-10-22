@@ -14,7 +14,7 @@ class ImageRouter():
 
     def set_routes(self):
 
-        @self.router.get('/generate-img-url')
+        @self.router.post('/generate-img-url')
         async def generate_img_url(request: Request):   
 
             try:
