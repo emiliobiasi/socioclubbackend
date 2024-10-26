@@ -68,18 +68,23 @@ class StripeService:
             raise e
         
     @staticmethod
-    def create_product_with_price(name: str, price: int, currency: str = "usd", interval: str = None):
+    def create_product_with_price(name: str, price: int, currency: str = "usd", interval: str = None, stripe_account: str = None):
         try:
+            # Build request options
+            request_options = {}
+            if stripe_account:
+                request_options['stripe_account'] = stripe_account
             
+            print("stripe_acc: " + stripe_account)
+
             price_obj = stripe.Price.create(
                 currency=currency,
-                unit_amount=price, 
+                unit_amount=price,
                 product_data={"name": name},
-                recurring={"interval": interval} if interval else None
+                recurring={"interval": interval} if interval else None,
+                **request_options  # Pass request options here
             )
-
             return price_obj
-
         except Exception as e:
             print(e)
             raise e

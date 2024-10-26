@@ -38,24 +38,25 @@ async def update_account(account_id: str):
 @router.post('/create_product')
 async def create_product(request: CreateProductStripe):
     try:
+        stripe_account_id = request.stripe_account_id
 
-        print(request.name)
-        # Criar o produto com preço no Stripe
+        print("stripe_acc: " + stripe_account_id + "   " + request.stripe_account_id)
+
         created_product = StripeService.create_product_with_price(
             name=request.name,
             price=request.price,
             currency=request.currency,
-            interval=None
+            interval=request.interval,
+            stripe_account=stripe_account_id
         )
 
-        # Retornar tanto o price_id quanto o product_id
-        return JSONResponse(content={
+        return {
             'price_id': created_product['id'],
             'product_id': created_product['product']
-        }, status_code=200)
-
+        }
     except Exception as e:
-        return JSONResponse(content={"message": f"Erro ao criar o produto: {str(e)}"}, status_code=500)
+        print(f"Erro ao criar o produto: {e}")
+        raise HTTPException(status_code=500, detail=f"Erro ao criar o produto: {str(e)}")
 
 
 @router.post('/vinculate')
