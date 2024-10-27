@@ -40,8 +40,6 @@ async def create_product(request: CreateProductStripe):
     try:
         stripe_account_id = request.stripe_account_id
 
-        print("stripe_acc: " + stripe_account_id + "   " + request.stripe_account_id)
-
         created_product = StripeService.create_product_with_price(
             name=request.name,
             price=request.price,
@@ -62,7 +60,11 @@ async def create_product(request: CreateProductStripe):
 @router.post('/vinculate')
 async def vinculate(temp: dict):
     try:
-
-        StripeService.vinculate(socioclub_id=temp['socioclub_id'], stripe_id=temp['stripe_id'], price_id=temp['price_id'])
+        StripeService.vinculate(
+            socioclub_id=temp['socioclub_id'],
+            stripe_id=temp['stripe_id'],
+            price_id=temp['price_id']
+        )
+        return JSONResponse(content={"message": "Produto vinculado com sucesso."}, status_code=200)
     except Exception as e:
         return JSONResponse(content={"message": f"Erro ao vincular: {str(e)}"}, status_code=500)
