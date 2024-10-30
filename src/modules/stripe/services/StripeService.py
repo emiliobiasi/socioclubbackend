@@ -116,3 +116,105 @@ class StripeService:
                 print(e)
         else:
             raise Exception("Falha na conexão ao PostgreSQL")
+        
+
+
+
+
+
+    # NOVAS FUNÇÕES PARA ASSINATURAS
+
+    @staticmethod
+    def create_customer(email: str, name: str = None, stripe_account: str = None):
+        try:
+            request_options = {}
+            if stripe_account:
+                request_options['stripe_account'] = stripe_account
+
+            customer = stripe.Customer.create(
+                email=email,
+                name=name,
+                **request_options
+            )
+            return customer
+        except Exception as e:
+            print(f"Erro ao criar o cliente: {e}")
+            raise e
+
+    @staticmethod
+    def create_subscription_product(name: str, price: int, currency: str = "usd", interval: str = "month", stripe_account: str = None):
+        try:
+            request_options = {}
+            if stripe_account:
+                request_options['stripe_account'] = stripe_account
+
+            price_data = {
+                "currency": currency,
+                "unit_amount": price,
+                "product_data": {"name": name},
+                "recurring": {"interval": interval}
+            }
+
+            price_obj = stripe.Price.create(
+                **price_data,
+                **request_options
+            )
+            return price_obj
+        except Exception as e:
+            print(f"Erro ao criar o produto de assinatura na Stripe: {e}")
+            raise e
+
+    @staticmethod
+    def create_checkout_session_for_subscription(price_id: str, success_url: str, cancel_url: str, stripe_account: str = None):
+        try:
+            request_options = {}
+            if stripe_account:
+                request_options['stripe_account'] = stripe_account
+
+            session = stripe.checkout.Session.create(
+                payment_method_types=['card'],
+                mode='subscription',
+                line_items=[{
+                    'price': price_id,
+                    'quantity': 1,
+                }],
+                success_url=success_url,
+                cancel_url=cancel_url,
+                **request_options
+            )
+            return session
+        except Exception as e:
+            print(f"Erro ao criar a sessão de checkout: {e}")
+            raise e
+
+    @staticmethod
+    def retrieve_checkout_session(session_id: str, stripe_account: str = None):
+        try:
+            request_options = {}
+            if stripe_account:
+                request_options['stripe_account'] = stripe_account
+
+            session = stripe.checkout.Session.retrieve(
+                session_id,
+                **request_options
+            )
+            return session
+        except Exception as e:
+            print(f"Erro ao recuperar a sessão de checkout: {e}")
+            raise e
+
+    @staticmethod
+    def retrieve_subscription(subscription_id: str, stripe_account: str = None):
+        try:
+            request_options = {}
+            if stripe_account:
+                request_options['stripe_account'] = stripe_account
+
+            subscription = stripe.Subscription.retrieve(
+                subscription_id,
+                **request_options
+            )
+            return subscription
+        except Exception as e:
+            print(f"Erro ao recuperar a assinatura: {e}")
+            raise e

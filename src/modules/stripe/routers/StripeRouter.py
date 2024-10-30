@@ -69,3 +69,105 @@ async def vinculate(temp: dict):
         return JSONResponse(content={"message": "Produto vinculado com sucesso."}, status_code=200)
     except Exception as e:
         return JSONResponse(content={"message": f"Erro ao vincular: {str(e)}"}, status_code=500)
+    
+
+
+
+
+
+# NOVAS ROTAS PARA ASSINATURAS
+
+@router.post('/create_customer')
+async def create_customer(request: dict):
+    try:
+        email = request.get('email')
+        name = request.get('name')
+        stripe_account_id = request.get('stripe_account_id')
+
+        if not email:
+            raise HTTPException(status_code=400, detail="Email é obrigatório")
+
+        customer = StripeService.create_customer(
+            email=email,
+            name=name,
+            stripe_account=stripe_account_id
+        )
+        return {'customer_id': customer.id}
+    except Exception as e:
+        print(f"Erro ao criar o cliente: {e}")
+        raise HTTPException(status_code=500, detail=f"Erro ao criar o cliente: {str(e)}")
+
+# Nova rota para criar produto de assinatura
+@router.post('/create_subscription_product')
+async def create_subscription_product(request: dict):
+    try:
+        name = request.get('name')
+        price = request.get('price')
+        currency = request.get('currency', 'usd')
+        interval = request.get('interval', 'month')
+        stripe_account_id = request.get('stripe_account_id')
+
+        if not name or not price or not interval:
+            raise HTTPException(status_code=400, detail="Nome, preço e intervalo são obrigatórios")
+
+        created_price = StripeService.create_subscription_product(
+            name=name,
+            price=price,
+            currency=currency,
+            interval=interval,
+            stripe_account=stripe_account_id
+        )
+
+        return {
+            'price_id': created_price['id'],
+            'product_id': created_price['product']
+        }
+    except Exception as e:
+        print(f"Erro ao criar o produto de assinatura: {e}")
+        raise HTTPException(status_code=500, detail=f"Erro ao criar o produto de assinatura: {str(e)}")
+
+@router.post('/create_checkout_session_subscription')
+async def create_checkout_session_subscription(request: dict):
+    try:
+        price_id = request.get('price_id')
+        success_url = request.get('success_url')
+        cancel_url = request.get('cancel_url')
+        stripe_account_id = request.get('stripe_account_id')
+
+        if not price_id or not success_url or not cancel_url:
+            raise HTTPException(status_code=400, detail="Price ID, Success URL e Cancel URL são obrigatórios")
+
+        session = StripeService.create_checkout_session_for_subscription(
+            price_id=price_id,
+            success_url=success_url,
+            cancel_url=cancel_url,
+            stripe_account=stripe_account_id
+        )
+        return {'checkout_url': session.url}
+    except Exception as e:
+        print(f"Erro ao criar a sessão de checkout: {e}")
+        raise HTTPException(status_code=500, detail=f"Erro ao criar a sessão de checkout: {str(e)}")
+
+@router.get('/retrieve_checkout_session')
+async def retrieve_checkout_session(session_id: str, stripe_account_id: str = None):
+    try:
+        session = StripeService.retrieve_checkout_session(
+            session_id=session_id,
+            stripe_account=stripe_account_id
+        )
+        return session
+    except Exception as e:
+        print(f"Erro ao recuperar a sessão de checkout: {e}")
+        raise HTTPException(status_code=500, detail=f"Erro ao recuperar a sessão de checkout: {str(e)}")
+
+@router.get('/retrieve_subscription')
+async def retrieve_subscription(subscription_id: str, stripe_account_id: str = None):
+    try:
+        subscription = StripeService.retrieve_subscription(
+            subscription_id=subscription_id,
+            stripe_account=stripe_account_id
+        )
+        return subscription
+    except Exception as e:
+        print(f"Erro ao recuperar a assinatura: {e}")
+        raise HTTPException(status_code=500, detail=f"Erro ao recuperar a assinatura: {str(e)}")
