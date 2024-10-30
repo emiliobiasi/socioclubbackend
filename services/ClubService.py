@@ -42,20 +42,20 @@ class ClubService:
                         id = club[0],
                         name = club[1],
                         password = club[2],
-                        description = club[3],
+                        description = club[3] if club[3] is not None else '',
                         address = club[4],
-                        logo = club[5],
+                        logo = club[5] if club[5] is not None else '',
                         email = club[6],
                         cnpj = club[7],
-                        background = club[8],
+                        background = club[8] if club[8] is not None else '',
                         titles_color = club[9],
                         subtitles_color = club[10],
                         buttons_color = club[11],
                         palette_1 = club[12],
                         palette_2 = club[13],
                         palette_3 = club[14],
-                        club_category= club[15],
-                        stripe_id = club[16]
+                        club_category= club[15] if club[15] is not None else 1,
+                        stripe_id = club[16] 
                     )
                 )
             return clubs_list
@@ -159,7 +159,7 @@ class ClubService:
             raise Exception('Falha na conexão ao PostgreSQL')
 
     @staticmethod
-    def create_club(club: RegisterClub):
+    def create_club(club: Club):
         connection = connect_to_db()
         if connection:
             cursor = connection.cursor()
@@ -170,8 +170,20 @@ class ClubService:
                         password,
                         address,
                         email,
-                        cnpj
+                        cnpj,
+                        titles_color,
+                        subtitles_color,
+                        buttons_color,
+                        palette_1,
+                        palette_2,
+                        palette_3
                     ) values (
+                        %s,
+                        %s,
+                        %s,
+                        %s,
+                        %s,
+                        %s,
                         %s,
                         %s,
                         %s,
@@ -185,6 +197,12 @@ class ClubService:
                     club.address,
                     club.email,
                     club.cnpj,
+                    club.titles_color,
+                    club.subtitles_color,
+                    club.buttons_color,
+                    club.palette_1,
+                    club.palette_2,
+                    club.palette_3
                 )
             )
 
@@ -238,19 +256,19 @@ class ClubService:
                         id = data[0],
                         name = data[1],
                         password = data[2],
-                        description = data[3],
+                        description = data[3] if data[3] is not None else '',
                         address = data[4],
-                        logo = data[5],
+                        logo = data[5] if data[5] is not None else '',
                         email = data[6],
                         cnpj = data[7],
-                        background = data[8],
+                        background = data[8] if data[8] is not None else '',
                         titles_color = data[9],
                         subtitles_color = data[10],
                         buttons_color = data[11],
                         palette_1 = data[12],
                         palette_2 = data[13],
                         palette_3 = data[14],
-                        club_category= data[15],
+                        club_category= data[15] if data[15] is not None else 1,
                         stripe_id = data[16]
                     )
             else:

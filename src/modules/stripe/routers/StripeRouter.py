@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, Request
 from starlette.responses import JSONResponse
 from models.stripe.create_product_stripe import CreateProductStripe
 from models.stripe.vinculate import Vinculate
-from services.StripeService import StripeService
+from src.modules.stripe.services.StripeService import StripeService
 
 router = APIRouter()
 
@@ -63,7 +63,8 @@ async def vinculate(temp: dict):
         StripeService.vinculate(
             socioclub_id=temp['socioclub_id'],
             stripe_id=temp['stripe_id'],
-            price_id=temp['price_id']
+            price_id=temp['price_id'],
+            is_product=temp['is_product']
         )
         return JSONResponse(content={"message": "Produto vinculado com sucesso."}, status_code=200)
     except Exception as e:

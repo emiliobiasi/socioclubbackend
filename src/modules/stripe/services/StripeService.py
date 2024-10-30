@@ -90,8 +90,14 @@ class StripeService:
             raise e
         
     @staticmethod
-    def vinculate(socioclub_id: int, stripe_id: str, price_id: str):
-        query = 'insert into stripe(socioclub_id, stripe_id, price_id) values (%s, %s, %s)'
+    def vinculate(socioclub_id: int, stripe_id: str, price_id: str, is_product: bool):
+
+        column = 'fk_Product_id' if is_product else 'fk_Event_id'
+
+        query = f'insert into stripe({column}, stripe_id, price_id) values (%s, %s, %s)'
+
+        print(query)
+
         t = (socioclub_id, stripe_id, price_id)
 
         StripeService._execute_query(query=query, t=t)

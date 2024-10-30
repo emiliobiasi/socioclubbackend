@@ -11,7 +11,6 @@ from routers import (
     ProductRouter,
     PlanRouter,
     TicketRouter,
-    StripeRouter,
 )
 import sys
 import os
@@ -21,6 +20,7 @@ from services.ClientService import ClientService
 from src.modules.images.external.datasource.image_datasource import ImageDatasource
 from src.modules.images.external.repositories.image_repository import ImageRepository
 from src.modules.images.external.routers.image_router import ImageRouter
+from src.modules.stripe.routers import StripeRouter
 import os
 
 full_path = os.path.abspath(os.path.join("./", ".env"))

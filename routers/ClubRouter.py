@@ -1,5 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from starlette.responses import JSONResponse
+from models.clubs.RegisterClub import RegisterClub
 from models.clubs.RegisterStripeClub import RegisterStripeClub
 from models.clubs.ColorSchemeClub import ColorSchemeClub
 from models.clubs.LoginClub import LoginClub
@@ -42,6 +43,7 @@ async def get_following_club(client_id: str):
 
 @router.post('/createClub')
 async def create_club(club: Club):
+    print("club: " + str(club))
     try:
         ClubService.create_club(club=club)
         return JSONResponse(content={'success': 'Clube criado',}, status_code=200)
