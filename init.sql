@@ -79,6 +79,7 @@ CREATE TABLE Buy (
 CREATE TABLE Stripe(
     fk_Event_id INTEGER,
     fk_Product_id INTEGER,
+    fk_Plan_id INTEGER,
     stripe_id VARCHAR,
     price_id VARCHAR
 );
@@ -134,6 +135,9 @@ ADD CONSTRAINT FK_Stripe_1 FOREIGN KEY (fk_Event_id) REFERENCES Event (id) ON DE
 
 ALTER TABLE Stripe
 ADD CONSTRAINT FK_Stripe_2 FOREIGN KEY (fk_Product_id) REFERENCES Product (id) ON DELETE RESTRICT;
+
+ALTER TABLE Stripe
+ADD CONSTRAINT FK_Stripe_3 FOREIGN KEY (fk_Plan_id) REFERENCES Plan (id) ON DELETE RESTRICT;
 
 INSERT INTO ClubCategory (name)
 VALUES ('Futebol');
