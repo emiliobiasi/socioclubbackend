@@ -71,7 +71,7 @@ class ClientService:
         
         if connection:
             cursor = connection.cursor()
-            cursor.execute("SELECT * FROM Client;")
+            cursor.execute("SELECT id, cpf, name, email, password FROM Client;")
             data = cursor.fetchall()
             cursor.close()
             connection.close()
@@ -179,7 +179,7 @@ class ClientService:
         connection = connect_to_db()
         if connection:
             cursor = connection.cursor()
-            cursor.execute("SELECT * FROM Client WHERE email = %s;", (email,))
+            cursor.execute("SELECT id, cpf, name, email, password FROM Client WHERE email = %s;", (email,))
             data = cursor.fetchone()
             cursor.close()
             connection.close()
@@ -199,7 +199,7 @@ class ClientService:
             end_date = datetime.now() + relativedelta(months= 1)
 
             cursor.execute(
-                'INSERT INTO Associate (fk_Client_id, fk_Plan_id ,end_date) VALUES (%s, %s, %s)',
+                'INSERT INTO Associate (fk_Client_id, fk_Plan_id, end_date) VALUES (%s, %s, %s)',
                 (client_id, plan_id, end_date.strftime('%Y-%m-%d'))
             )
 
@@ -275,7 +275,7 @@ class ClientService:
             cursor = connection.cursor()
             date = datetime.now()
             cursor.execute(
-                'SELECT p.*, a.end_date FROM Plan p INNER JOIN Associate a ON a.fk_Plan_id = p.id WHERE a.fk_Client_id = %s',
+                'SELECT p.id, p.price, p.discount, p.priority, p.name, p.description, p.image, a.end_date FROM Plan p INNER JOIN Associate a ON a.fk_Plan_id = p.id WHERE a.fk_Client_id = %s',
                 (client_id)
             )
             data = cursor.fetchall()

@@ -87,7 +87,7 @@ class TicketService:
 
                 cursor.execute(
                     '''
-                        SELECT e.* 
+                        SELECT e.id, e.event_name, e.description, e.image, e.full_price, e.event_date, e.tickets_away, e.tickets_home, e.fk_Club_id 
                         FROM Event e
                         INNER JOIN Ticket i ON i.fk_Event_id = e.id
                         INNER JOIN Buy b ON b.fk_Ticket_qr_code = i.qr_code

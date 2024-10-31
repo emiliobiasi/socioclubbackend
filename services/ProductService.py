@@ -94,7 +94,7 @@ class ProductService:
         if connection:
             cursor = connection.cursor()
             cursor.execute(
-                'SELECT p.* FROM Product p JOIN Buy b ON p.id = b.fk_Product_id WHERE b.fk_Client_id = %s',
+                'SELECT p.id, p.name, p.description, p.price, p.fk_Club_id, p.fk_ProductCategory_id, p.image FROM Product p JOIN Buy b ON p.id = b.fk_Product_id WHERE b.fk_Client_id = %s',
                 (client_id)
             )
             data = cursor.fetchall()
@@ -106,7 +106,7 @@ class ProductService:
             for product in data:
                 product_list.append(
                     Product(
-                        id = product[0],
+                        id= product[0],
                         name=product[1],
                         description=product[2],
                         price=product[3],
