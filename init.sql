@@ -64,7 +64,11 @@ CREATE TABLE Event (
     description VARCHAR,
     fk_Club_id INTEGER
 );
-CREATE TABLE Ticket (qr_code VARCHAR PRIMARY KEY, fk_Event_id INTEGER);
+CREATE TABLE Ticket (
+    qr_code VARCHAR PRIMARY KEY,
+    fk_Event_id INTEGER,
+    fk_Client_id INTEGER
+);
 CREATE TABLE ProductCategory (id SERIAL PRIMARY KEY, name VARCHAR);
 CREATE TABLE Associate (
     fk_Club_id INTEGER,
@@ -74,8 +78,7 @@ CREATE TABLE Associate (
 );
 CREATE TABLE Buy (
     fk_Client_id INTEGER,
-    fk_Product_id INTEGER,
-    fk_Ticket_qr_code VARCHAR
+    fk_Product_id INTEGER
 );
 CREATE TABLE Stripe(
     fk_Event_id INTEGER,
@@ -99,6 +102,8 @@ ALTER TABLE Event
 ADD CONSTRAINT FK_Event_2 FOREIGN KEY (fk_Club_id) REFERENCES Club (id) ON DELETE RESTRICT;
 ALTER TABLE Ticket
 ADD CONSTRAINT FK_Ticket_2 FOREIGN KEY (fk_Event_id) REFERENCES Event (id) ON DELETE RESTRICT;
+ALTER TABLE Ticket
+ADD CONSTRAINT FK_Ticket_3 FOREIGN KEY (fk_Client_id) REFERENCES Client (id) ON DELETE RESTRICT;
 ALTER TABLE Associate
 ADD CONSTRAINT FK_Associate_1 FOREIGN KEY (fk_Club_id) REFERENCES Club (id) ON DELETE NO ACTION;
 ALTER TABLE Associate
@@ -109,18 +114,16 @@ ALTER TABLE Buy
 ADD CONSTRAINT FK_Buy_1 FOREIGN KEY (fk_Client_id) REFERENCES Client (id) ON DELETE NO ACTION;
 ALTER TABLE Buy
 ADD CONSTRAINT FK_Buy_2 FOREIGN KEY (fk_Product_id) REFERENCES Product (id) ON DELETE NO ACTION;
-ALTER TABLE Buy
-ADD CONSTRAINT FK_Buy_3 FOREIGN KEY (fk_Ticket_qr_code) REFERENCES Ticket (qr_code) ON DELETE NO ACTION;
 ALTER TABLE Follow
 ADD CONSTRAINT FK_Follow_1 FOREIGN KEY (fk_Client_id) REFERENCES Client (id) ON DELETE RESTRICT;
 ALTER TABLE Follow
 ADD CONSTRAINT FK_Follow_2 FOREIGN KEY (fk_Club_id) REFERENCES Club (id) ON DELETE RESTRICT;
 ALTER TABLE Stripe
-ADD CONSTRAINT FK_Stripe_1 FOREIGN KEY (fk_Event_id) REFERENCES Event (id) ON DELETE RESTRICT;
+ADD CONSTRAINT FK_Stripe_1 FOREIGN KEY (fk_Event_id) REFERENCES Event (id) ON DELETE CASCADE;
 ALTER TABLE Stripe
-ADD CONSTRAINT FK_Stripe_2 FOREIGN KEY (fk_Product_id) REFERENCES Product (id) ON DELETE RESTRICT;
+ADD CONSTRAINT FK_Stripe_2 FOREIGN KEY (fk_Product_id) REFERENCES Product (id) ON DELETE CASCADE;
 ALTER TABLE Stripe
-ADD CONSTRAINT FK_Stripe_3 FOREIGN KEY (fk_Plan_id) REFERENCES Plan (id) ON DELETE RESTRICT;
+ADD CONSTRAINT FK_Stripe_3 FOREIGN KEY (fk_Plan_id) REFERENCES Plan (id) ON DELETE CASCADE;
 INSERT INTO ClubCategory (name)
 VALUES ('Futebol');
 INSERT INTO ProductCategory (name)
@@ -159,7 +162,7 @@ VALUES (
         '#fc2221',
         '#460101',
         1,
-        ''
+        'acct_1QGoi1CpJm4lSLTn'
     );
 INSERT INTO Client (cpf, name, email, password)
 VALUES (

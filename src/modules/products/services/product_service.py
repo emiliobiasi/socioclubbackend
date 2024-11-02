@@ -2,6 +2,8 @@ from typing import List, Optional
 from models.products.Product import Product
 from models.products.CreateProduct import CreateProduct
 from database.connection.Connection import connect_to_db
+
+from src.modules.products.models.product_stripe import ProductStripe
 import os
 from dotenv import load_dotenv
 from dotenv import dotenv_values
@@ -163,7 +165,37 @@ class ProductService:
         delete_tuple = (product_id,)
 
         ProductService._execute_query(delete_query, delete_tuple)
+    
+    @staticmethod
+    def get_stripe_products_by_club_id(club_id: str):
+        print(club_id)
+        select_query = '''
+            select p.id, p.name, p.description, p.price, p.image, p.fk_ProductCategory_id, s.stripe_id, s.price_id
+            from product p 
+            join stripe s on p.id = s.fk_Product_id
+            where p.fk_Club_id = %s
+        '''
+        select_tuple = (club_id,)
 
+        data = ProductService._execute_select_all_query(query=select_query, t=select_tuple)
+
+        ret = []
+
+        for product in data:
+            ret.append(
+                ProductStripe(
+                    id=product[0],
+                    name=product[1],
+                    description=product[2],
+                    price=product[3],
+                    image=product[4],
+                    category_id=product[5],
+                    stripe_id=product[6],
+                    price_id=product[7],
+                )
+            )
+
+        return ret
 
     @staticmethod
     def _execute_query(query: str, params=None):
@@ -191,6 +223,21 @@ class ProductService:
             cursor = connection.cursor()
             cursor.execute(query, t)
             data = cursor.fetchone()
+            connection.commit()
+            cursor.close()
+            connection.close()
+
+            return data
+        else:
+            raise Exception("Falha na conexão ao PostgreSQL")
+    
+    @staticmethod
+    def _execute_select_all_query(query: str, t: tuple):
+        connection = connect_to_db()
+        if connection:
+            cursor = connection.cursor()
+            cursor.execute(query, t)
+            data = cursor.fetchall()
             connection.commit()
             cursor.close()
             connection.close()

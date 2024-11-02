@@ -55,13 +55,8 @@ class TicketService:
                 qr_code = ''.join(random.choice(caracteres) for _ in range(16))
 
                 cursor.execute(
-                    'INSERT INTO Ticket(qr_code, fk_Event_id) VALUES (%s,%s)',
-                    (qr_code, event_id)
-                )
-
-                cursor.execute(
-                    'INSERT INTO Buy (fk_Client_id, fk_Ticket_qr_code) VALUES (%s, %s)',
-                    (client_id, qr_code)
+                    'INSERT INTO Ticket(qr_code, fk_Event_id, fk_Client_id) VALUES (%s,%s, %s)',
+                    (qr_code, event_id, client_id)
                 )
 
                 cursor.execute(
@@ -89,11 +84,10 @@ class TicketService:
                     '''
                         SELECT e.id, e.event_name, e.description, e.image, e.full_price, e.event_date, e.tickets_away, e.tickets_home, e.fk_Club_id 
                         FROM Event e
-                        INNER JOIN Ticket i ON i.fk_Event_id = e.id
-                        INNER JOIN Buy b ON b.fk_Ticket_qr_code = i.qr_code
-                        WHERE b.fk_Client_id = %s
+                        INNER JOIN Ticket t ON t.fk_Event_id = e.id
+                        WHERE t.fk_Client_id = %s
                     ''',
-                    (client_id)
+                    (client_id,)
                 )
 
                 data = cursor.fetchall()
@@ -131,11 +125,10 @@ class TicketService:
 
             cursor.execute(
                 '''
-                    SELECT e.event_name, e.image, e.event_date, e.description, e.full_price, i.qr_code
+                    SELECT e.event_name, e.image, e.event_date, e.description, e.full_price, t.qr_code
                     FROM Event e
-                    INNER JOIN Ticket i ON i.fk_Event_id = e.id
-                    INNER JOIN Buy b ON b.fk_Ticket_qr_code = i.qr_code
-                    WHERE b.fk_Client_id = %s AND e.event_date > %s
+                    INNER JOIN Ticket t ON t.fk_Event_id = e.id
+                    WHERE t.fk_Client_id = %s AND e.event_date > %s
                 ''',
                 (client_id, now.strftime('%Y-%m-%d %H:%M:%S'))
             )

@@ -110,3 +110,25 @@ class StripeService:
                 print(e)
         else:
             raise Exception("Falha na conexão ao PostgreSQL")
+        
+    # Criação de checkout session
+    @staticmethod
+    def create_checkout_session(price_id: str, product_id: str, success_url: str, cancel_url: str):
+        try:
+            session = stripe.checkout.Session.create(
+                payment_method_types=['card'],
+                line_items=[
+                    {
+                        'price': price_id,
+                        'quantity': 1,
+                    },
+                ],
+                mode='payment',
+                success_url=success_url,
+                cancel_url=cancel_url,
+                metadata={'product_id': product_id}
+            )
+            return session
+        except Exception as e:
+            print('Ocorreu um erro ao criar a sessão de checkout:', e)
+            raise e

@@ -92,10 +92,8 @@ class StripeService:
     @staticmethod
     def vinculate(socioclub_id: int, stripe_id: str, price_id: str, column):
 
-
+        print(socioclub_id)
         query = f'insert into stripe({column}, stripe_id, price_id) values (%s, %s, %s)'
-
-        print(query)
 
         t = (socioclub_id, stripe_id, price_id)
 
@@ -216,4 +214,34 @@ class StripeService:
             return subscription
         except Exception as e:
             print(f"Erro ao recuperar a assinatura: {e}")
+            raise e
+        
+
+    @staticmethod
+    def create_checkout_session(line_items: list, success_url: str, cancel_url: str, client_reference_id: str, stripe_account :str):
+        try:
+        
+            request_options = {}
+            if stripe_account:
+                request_options['stripe_account'] = stripe_account
+            stripe_line_items = []
+            for item in line_items:
+                stripe_line_items.append({
+                    'price': item['price_id'],
+                    'quantity': item.get('quantity', 1),
+                })
+
+            session = stripe.checkout.Session.create(
+                payment_method_types=['card'],
+                line_items=stripe_line_items,
+                mode='payment',
+                success_url=success_url,
+                cancel_url=cancel_url,
+                client_reference_id=client_reference_id,
+                **request_options 
+
+            )
+            return session
+        except Exception as e:
+            print('Ocorreu um erro ao criar a sessão de checkout:', e)
             raise e

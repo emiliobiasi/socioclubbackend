@@ -43,7 +43,6 @@ async def get_following_club(client_id: str):
 
 @router.post('/createClub')
 async def create_club(club: Club):
-    print("club: " + str(club))
     try:
         ClubService.create_club(club=club)
         return JSONResponse(content={'success': 'Clube criado',}, status_code=200)

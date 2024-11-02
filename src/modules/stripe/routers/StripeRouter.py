@@ -61,6 +61,9 @@ async def create_product(request: CreateProductStripe):
 @router.post('/vinculate')
 async def vinculate(temp: dict):
     try:
+        print(temp['socioclub_id'])
+        print(temp['stripe_id'])
+        
         StripeService.vinculate(
             socioclub_id=temp['socioclub_id'],
             stripe_id=temp['stripe_id'],
@@ -172,3 +175,41 @@ async def retrieve_subscription(subscription_id: str, stripe_account_id: str = N
     except Exception as e:
         print(f"Erro ao recuperar a assinatura: {e}")
         raise HTTPException(status_code=500, detail=f"Erro ao recuperar a assinatura: {str(e)}")
+    
+
+# Criação de rota para criar checkout session
+@router.post('/create_checkout_link')
+async def create_checkout_link(request: Request):
+    try:
+        data = await request.json()
+        client_id = data.get('client_id')
+        items = data.get('items')  # Espera-se que 'items' seja uma lista de {'price_id', 'quantity'}
+        stripe_account = data.get('stripe_id')
+
+        print("stripe_account", stripe_account)
+
+        if not client_id or not items:
+            raise HTTPException(status_code=400, detail="Os campos 'client_id' e 'items' são obrigatórios.")
+
+        # Validar cada item
+        for item in items:
+            if not item.get('price_id'):
+                raise HTTPException(status_code=400, detail="Cada item deve ter 'price_id'.")
+
+        success_url = "https://seusite.com/sucesso"
+        cancel_url = "https://seusite.com/cancelar"
+
+        session = StripeService.create_checkout_session(
+            line_items=items,
+            success_url=success_url,
+            cancel_url=cancel_url,
+            client_reference_id=client_id,
+            stripe_account=stripe_account
+        )
+
+        return {"checkout_url": session.url}
+    except HTTPException as http_exc:
+        raise http_exc
+    except Exception as e:
+        print(f"Erro ao criar a sessão de checkout: {e}")
+        raise HTTPException(status_code=500, detail="Erro interno do servidor ao criar a sessão de checkout.")

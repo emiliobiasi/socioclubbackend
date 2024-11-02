@@ -8,7 +8,6 @@ from routers import (
     EventRouter,
     NewsRouter,
     ClubCategoryRouter,
-    ProductRouter,
     PlanRouter,
     TicketRouter,
 )
@@ -19,6 +18,8 @@ from jose import jwt, JWTError
 from services.ClientService import ClientService
 from src.modules.images.external.datasource.image_datasource import ImageDatasource
 from src.modules.images.external.repositories.image_repository import ImageRepository
+
+from src.modules.products.routers import product_router as ProductRouter
 from src.modules.images.external.routers.image_router import ImageRouter
 from src.modules.stripe.routers import StripeRouter
 import os

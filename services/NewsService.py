@@ -29,7 +29,6 @@ class NewsService:
             cursor.close
             news_list = []
             for news in data:
-                print(news[5])
                 news_list.append(
                     News(
                         id = news[0],
@@ -90,8 +89,6 @@ class NewsService:
         create_tuple = (new_news.text,new_news.image,new_news.author,new_news.title,new_news.club_id)
 
         data = NewsService._execute_select_one_query(query=create_query, t= create_tuple)
-
-        print(data)
 
         return News(
             id=data[0],
