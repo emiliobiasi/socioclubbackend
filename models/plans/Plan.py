@@ -20,3 +20,15 @@ class Plan(BaseModel):
     dictDiscount: ClassVar[str] = 'discount'
     dictPriority: ClassVar[str] = 'priority'
     dictClub_id: ClassVar[str] = 'club_id'
+
+    def to_dict(self):
+        return {
+            self.dictId: self.id,
+            self.dictName: self.name,
+            self.dictDescription: self.description,
+            self.dictImage: self.image,
+            self.dictPrice: self.price,
+            self.dictDiscount: self.discount,
+            self.dictPriority: self.priority,
+            self.dictClub_id: self.club_id,
+        }

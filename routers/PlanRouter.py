@@ -25,8 +25,11 @@ async def get_plans_by_club_id(club_id: str):
 @router.post('/createPlan')
 async def create_plan(plan: RegisterPlan):
     try:
-        PlanService.create_plan(plan= plan)
-        return JSONResponse(content={'message': 'Plano criado com sucesso'}, status_code=200)
+        created_plan = PlanService.create_plan(plan= plan)
+
+        print(created_plan)
+
+        return JSONResponse(content={'plan': created_plan.to_dict()}, status_code=200)
     except Exception as e:
         return JSONResponse(content={'message': f'Erro ao criar plano: {e}'}, status_code=500)
     

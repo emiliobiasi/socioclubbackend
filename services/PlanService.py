@@ -77,43 +77,52 @@ class PlanService:
             raise Exception("Falha na conexão ao PostgreSQL")
         
     @staticmethod
-    def create_plan(plan: RegisterPlan):
-        connection = connect_to_db()
-        if connection:
-            cursor = connection.cursor()
-            cursor.execute(
-                '''
-                    INSERT INTO Plan (
-                        name,
-                        description,
-                        image,
-                        price,
-                        discount,
-                        priority,
-                        fk_Club_id
-                    ) VALUES (
-                        %s,
-                        %s,
-                        %s,
-                        %s,
-                        %s,
-                        %s,
-                        %s
-                    )
-                ''',
-                (
-                    plan.name,
-                    plan.description,
-                    plan.image,
-                    plan.price,
-                    plan.discount,
-                    plan.priority,
-                    plan.club_id
-                )
+    def create_plan(plan: RegisterPlan) -> Plan:
+        create_query = '''
+            INSERT INTO Plan (
+                name,
+                description,
+                image,
+                price,
+                discount,
+                priority,
+                fk_Club_id
+            ) VALUES (
+                %s,
+                %s,
+                %s,
+                %s,
+                %s,
+                %s,
+                %s
             )
-        connection.commit()
-        cursor.close()
-        connection.close()
+            RETURNING id, name, description, image, price, discount, priority, fk_Club_id;
+        '''
+        
+        create_tuple = (
+            plan.name,
+            plan.description,
+            plan.image,
+            plan.price,
+            plan.discount,
+            plan.priority,
+            plan.club_id
+        )
+        
+        # Executa a query e recupera o resultado
+        data = PlanService._execute_select_one_query(query=create_query, t=create_tuple)
+        
+        return Plan(
+            id=data[0],
+            name=data[1],
+            description=data[2],
+            image=data[3],
+            price=data[4],
+            discount=data[5],
+            priority=data[6],
+            club_id=data[7]
+        )
+
     
     @staticmethod
     def delete_plan(plan_id: str):
@@ -166,6 +175,21 @@ class PlanService:
                 connection.close()
             except Exception as e:
                 print(e)
+        else:
+            raise Exception("Falha na conexão ao PostgreSQL")
+        
+    @staticmethod
+    def _execute_select_one_query(query: str, t: tuple):
+        connection = connect_to_db()
+        if connection:
+            cursor = connection.cursor()
+            cursor.execute(query, t)
+            data = cursor.fetchone()
+            connection.commit()
+            cursor.close()
+            connection.close()
+
+            return data
         else:
             raise Exception("Falha na conexão ao PostgreSQL")
 

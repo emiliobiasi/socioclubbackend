@@ -216,7 +216,6 @@ class StripeService:
             print(f"Erro ao recuperar a assinatura: {e}")
             raise e
         
-
     @staticmethod
     def create_checkout_session(line_items: list, success_url: str, cancel_url: str, client_reference_id: str, stripe_account :str):
         try:
@@ -238,9 +237,9 @@ class StripeService:
                 success_url=success_url,
                 cancel_url=cancel_url,
                 client_reference_id=client_reference_id,
-                **request_options 
-
+                **request_options
             )
+
             return session
         except Exception as e:
             print('Ocorreu um erro ao criar a sessão de checkout:', e)
