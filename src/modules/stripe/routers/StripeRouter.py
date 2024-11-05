@@ -185,6 +185,7 @@ async def create_checkout_link(request: Request):
         client_id = data.get('client_id')
         items = data.get('items')  # Espera-se que 'items' seja uma lista de {'price_id', 'quantity'}
         stripe_account = data.get('stripe_id')
+        mode = data.get('mode')
 
         print("stripe_account", stripe_account)
 
@@ -204,7 +205,8 @@ async def create_checkout_link(request: Request):
             success_url=success_url,
             cancel_url=cancel_url,
             client_reference_id=client_id,
-            stripe_account=stripe_account
+            stripe_account=stripe_account,
+            mode=mode
         )
 
         return {"checkout_url": session.url}

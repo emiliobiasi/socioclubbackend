@@ -217,9 +217,8 @@ class StripeService:
             raise e
         
     @staticmethod
-    def create_checkout_session(line_items: list, success_url: str, cancel_url: str, client_reference_id: str, stripe_account :str):
+    def create_checkout_session(line_items: list, success_url: str, cancel_url: str, client_reference_id: str, stripe_account :str, mode: str):
         try:
-        
             request_options = {}
             if stripe_account:
                 request_options['stripe_account'] = stripe_account
@@ -233,7 +232,7 @@ class StripeService:
             session = stripe.checkout.Session.create(
                 payment_method_types=['card'],
                 line_items=stripe_line_items,
-                mode='payment',
+                mode=mode,
                 success_url=success_url,
                 cancel_url=cancel_url,
                 client_reference_id=client_reference_id,
