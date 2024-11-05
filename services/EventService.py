@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from dotenv import dotenv_values
 from models.events.CreateEvent import CreateEvent
 from models.events.Event import Event
+from models.events.event_stripe import EventStripe
 
 
 projeto_raiz = os.getcwd()
@@ -99,6 +100,41 @@ class EventService:
             new_event.fkClubId
         )
         EventService._execute_query(query, create_tuple)
+
+    
+    @staticmethod
+    def get_stripe_events_by_club_id(club_id: str):
+        print(club_id)
+        select_query = '''
+            select e.id, e.event_name, e.description, e.image, e.full_price,  e.event_date, e.tickets_away, e.tickets_home, s.stripe_id, s.price_id
+            from event e 
+            join stripe s on e.id = s.fk_Event_id
+            where e.fk_Club_id = %s
+        '''
+        select_tuple = (club_id,)
+
+        data = EventService._execute_select_all_query(query=select_query, t=select_tuple)
+
+        ret = []
+
+        for plan in data:
+            ret.append(
+                EventStripe(
+                    id=plan[0],
+                    eventName=plan[1],
+                    description=plan[2],
+                    image=plan[3],
+                    fullPrice=plan[4],
+                    eventDate=plan[5],
+                    ticketsAway=plan[6],
+                    ticketsHome=plan[7],
+                    stripe_id=plan[8],
+                    price_id=plan[9],
+                    club_id=int(club_id)
+                )
+            )
+
+        return ret
     
     @staticmethod
     def delete_event(event_id: str):
@@ -117,5 +153,20 @@ class EventService:
             connection.commit()
             cursor.close()
             connection.close()
+        else:
+            raise Exception("Falha na conexão ao PostgreSQL")
+    
+    @staticmethod
+    def _execute_select_all_query(query: str, t: tuple):
+        connection = connect_to_db()
+        if connection:
+            cursor = connection.cursor()
+            cursor.execute(query, t)
+            data = cursor.fetchall()
+            connection.commit()
+            cursor.close()
+            connection.close()
+
+            return data
         else:
             raise Exception("Falha na conexão ao PostgreSQL")

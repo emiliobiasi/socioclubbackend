@@ -41,3 +41,12 @@ async def delete_event(event_id: str):
 
     except Exception as e:
         return JSONResponse(content={"message": f"Erro ao deletar evento: {str(e)}"}, status_code=500)
+
+@router.get('/getStripeEventByClubId/{club_id}')
+async def get_products_by_club_id(club_id: str):
+    try:
+        events = EventService.get_stripe_events_by_club_id(club_id=club_id)
+        return JSONResponse(content={'events': [event.dict() for event in events]}, status_code=200)
+
+    except Exception as e:
+        return JSONResponse(content={"message": f"Erro ao obter clubes: {str(e)}"}, status_code=500)

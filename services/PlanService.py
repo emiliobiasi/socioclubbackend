@@ -137,7 +137,7 @@ class PlanService:
         select_query = '''
             select p.id, p.name, p.description, p.price, p.image, p.discount, p.priority, s.stripe_id, s.price_id
             from plan p 
-            join stripe s on p.id = s.fk_Product_id
+            join stripe s on p.id = s.fk_Plan_id
             where p.fk_Club_id = %s
         '''
         select_tuple = (club_id,)
@@ -157,7 +157,8 @@ class PlanService:
                     discount=plan[5],
                     priority=plan[6],
                     stripe_id=plan[7],
-                    price_id=plan[8]
+                    price_id=plan[8],
+                    club_id=int(club_id)
                 )
             )
 
