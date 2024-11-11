@@ -215,3 +215,16 @@ async def create_checkout_link(request: Request):
     except Exception as e:
         print(f"Erro ao criar a sessão de checkout: {e}")
         raise HTTPException(status_code=500, detail="Erro interno do servidor ao criar a sessão de checkout.")
+    
+@router.post('/create_login_link')
+async def create_login_link(request: dict):
+    try:
+        account_id = request.get('account_id')
+        if not account_id:
+            raise HTTPException(status_code=400, detail="Account ID é obrigatório")
+
+        login_link = StripeService.create_login_link(account_id)
+        return JSONResponse(content={'login_url': login_link.url}, status_code=200)
+    except Exception as e:
+        print(f"Erro ao criar o login link: {e}")
+        return JSONResponse(content={"message": f"Erro ao criar o login link: {str(e)}"}, status_code=500)

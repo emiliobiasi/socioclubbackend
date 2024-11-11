@@ -162,7 +162,7 @@ VALUES (
         '#fc2221',
         '#460101',
         1,
-        'acct_1QGoi1CpJm4lSLTn'
+        'acct_1QJpqICiXPEphK8B'
     );
 INSERT INTO Client (cpf, name, email, password)
 VALUES (

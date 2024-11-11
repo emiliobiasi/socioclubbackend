@@ -14,25 +14,13 @@ class StripeService:
     def create_account():
         try:
             account = stripe.Account.create(
-                controller={
-                    "stripe_dashboard": {
-                    "type": "none",
-                    },
-                    "fees": {
-                    "payer": "application"
-                    },
-                    "losses": {
-                    "payments": "application"
-                    },
-                    "requirement_collection": "application",
-                },
+                type='express',
+                country='BR',
                 capabilities={
                     "card_payments": {"requested": True},
                     "transfers": {"requested": True}
                 },
-                country="BR",
             )
-            
             return account
 
         except Exception as e:
@@ -242,4 +230,13 @@ class StripeService:
             return session
         except Exception as e:
             print('Ocorreu um erro ao criar a sessão de checkout:', e)
+            raise e
+        
+    @staticmethod
+    def create_login_link(account_id: str):
+        try:
+            login_link = stripe.Account.create_login_link(account_id)
+            return login_link
+        except Exception as e:
+            print(f"Erro ao criar o login link: {e}")
             raise e
