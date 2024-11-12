@@ -12,6 +12,7 @@ import bcrypt
 from models.clubs.ColorSchemeClub import ColorSchemeClub
 from models.clubs.RegisterClub import RegisterClub
 from models.clubs.LoginClub import LoginClub
+from models.clubs.setup_club import SetupClub
 
 projeto_raiz = os.getcwd()
 caminho_env = os.path.join(projeto_raiz, '.env')
@@ -338,3 +339,28 @@ class ClubService:
         else:
             raise Exception("Falha na conexão ao PostgreSQL")
 
+    @staticmethod
+    def setup_club(setup: SetupClub, club_id: int):
+        try:
+            connection = connect_to_db()
+
+            if connection:
+                query = '''
+                    update club 
+                    set description = %s, logo = %s, background = %s, fk_ClubCategory_id = %s
+                    where id = %s 
+                '''
+
+                tu = (setup.description, setup.logo, setup.background, setup.club_category, club_id,)
+
+                cursor = connection.cursor()
+                cursor.execute(query, tu)
+
+                connection.commit()
+                cursor.close()
+                connection.close()
+            else:
+                raise Exception("Falha na conexão ao PostgreSQL")
+
+        except Exception as e:
+            raise e

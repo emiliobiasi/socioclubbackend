@@ -4,10 +4,9 @@ from models.clubs.RegisterClub import RegisterClub
 from models.clubs.RegisterStripeClub import RegisterStripeClub
 from models.clubs.ColorSchemeClub import ColorSchemeClub
 from models.clubs.LoginClub import LoginClub
+from models.clubs.setup_club import SetupClub
 from services.ClubService import ClubService
-
 from models.clubs.Club import Club
-
 
 router = APIRouter()
 
@@ -76,3 +75,11 @@ async def update_stripe_id(teste: RegisterStripeClub):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f'Erro ao atualizar Stripe ID: {e}')
 
+@router.put('/setupClub/{club_id}')
+async def setup_club(setup: SetupClub, club_id: int):
+    try:
+        ClubService.setup_club(setup=setup, club_id=club_id)
+        return JSONResponse(content={'success': 'Clube configurado com sucesso'}, status_code=200)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f'Erro ao configurar clube: {e}')
+ 
