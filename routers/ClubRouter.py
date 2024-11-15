@@ -76,8 +76,15 @@ async def update_stripe_id(teste: RegisterStripeClub):
         raise HTTPException(status_code=500, detail=f'Erro ao atualizar Stripe ID: {e}')
 
 @router.put('/setupClub/{club_id}')
-async def setup_club(setup: SetupClub, club_id: int):
+async def setup_club(temp: dict, club_id: int):
     try:
+        setup = SetupClub(
+            description=temp['description'],
+            logo=temp['logo'],
+            background=temp['background_img'],
+            club_category=temp['club_category']
+        )
+
         ClubService.setup_club(setup=setup, club_id=club_id)
         return JSONResponse(content={'success': 'Clube configurado com sucesso'}, status_code=200)
     except Exception as e:

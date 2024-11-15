@@ -51,9 +51,9 @@ class NewsService:
         if connection:
             
             cursor = connection.cursor()
-            cursor.execute('SELECT id, text, image, author, fk_Club_id, publish_date, title FROM News WHERE fk_Club_id = %s',(club_id))
+            cursor.execute('SELECT id, text, image, author, fk_Club_id, publish_date, title FROM News WHERE fk_Club_id = %s',(club_id,))
             data = cursor.fetchall()
-            cursor.close
+            cursor.close()
             news_list = []
             for news in data:
                 news_list.append(

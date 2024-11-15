@@ -54,7 +54,7 @@ class ProductService:
         if connection:
             
             cursor = connection.cursor()
-            cursor.execute('SELECT id, name, description, price, fk_Club_id, fk_ProductCategory_id, image FROM Product WHERE fk_Club_id = %s',(club_id))
+            cursor.execute('SELECT id, name, description, price, fk_Club_id, fk_ProductCategory_id, image FROM Product WHERE fk_Club_id = %s',(club_id,))
             data = cursor.fetchall()
             cursor.close()
             product_list = []

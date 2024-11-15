@@ -54,7 +54,7 @@ class PlanService:
         connection = connect_to_db()
         if connection:
             cursor = connection.cursor()
-            cursor.execute('SELECT * FROM Plan WHERE fk_Club_id = %s AND price != 0',(club_id))
+            cursor.execute('SELECT id, price, discount, priority, image, description, name, fk_Club_id FROM Plan WHERE fk_Club_id = %s AND price != 0',(club_id,))
             
             data = cursor.fetchall()
             cursor.close()

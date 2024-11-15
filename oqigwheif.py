@@ -10,7 +10,7 @@ connection = psycopg2.connect(
 
 if connection:
     cursor = connection.cursor()
-    cursor.execute('select * from stripe')
+    cursor.execute('select id, name from club')
 
     data = cursor.fetchall()
 
